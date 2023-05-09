@@ -22,8 +22,8 @@ describe('GET/api/categories', () => {
                 let arr = res.body.categories
                 arr.every((end) =>
                     expect(end).toEqual(expect.objectContaining({
-                        slug: expect.anything(),
-                        description: expect.anything(),
+                        slug: expect.any(String),
+                        description: expect.any(String),
                     })))
             })
     })
