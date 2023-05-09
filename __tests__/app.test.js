@@ -4,6 +4,8 @@ const request = require('supertest')
 const app = require('../db/app')
 const connection = require('../db/connection');
 const { string } = require('pg-format');
+const Endpoint = require('../endpoints.json')
+
 beforeEach(() => seed(testData))
 afterAll(() => connection.end())
 
@@ -28,6 +30,14 @@ describe('GET/api/categories', () => {
             })
     })
 })
+    describe('GET/api', () => {
+        it('returns an object containing information on the endpoints', ()=> {
+            return request(app)
+                .get('/api')
+                .expect(200)
+                .then(data => expect(JSON.parse(data.body.endpoint)).toEqual(Endpoint))
+            })
+        })
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
         return request(app)
