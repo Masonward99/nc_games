@@ -23,3 +23,11 @@ describe('GET/api/categories', () => {
             })
     })
 })
+describe('error handling', () => {
+    it('gets 404 when passed an invalid endpoint', () => {
+        return request(app)
+            .get('/api/cat')
+            .expect(404)
+        .then() 
+    })
+})
