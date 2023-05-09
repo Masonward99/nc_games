@@ -2,7 +2,8 @@ const testData = require('../db/data/test-data');
 const seed = require('../db/seeds/seed')
 const request = require('supertest')
 const app = require('../db/app')
-const connection = require('../db/connection')
+const connection = require('../db/connection');
+const { string } = require('pg-format');
 beforeEach(() => seed(testData))
 afterAll(() => connection.end())
 
@@ -11,15 +12,19 @@ describe('GET/api/categories', () => {
         return request(app)
             .get('/api/categories')
             .expect(200)
-        .then(res => expect(res.body.categories.length).toBe(4))
+            .then(res => expect(res.body.categories.length).toBe(4))
     })
     it('each categories object has correct keys', () => {
         return request(app)
             .get('/api/categories')
             .expect(200)
             .then(res => {
-                expect(res.body.categories[0]).toHaveProperty('slug')
-                expect(res.body.categories[0]).toHaveProperty("description")
+                let arr = res.body.categories
+                arr.every((end) =>
+                    expect(end).toEqual(expect.objectContaining({
+                        slug: expect.anything(),
+                        description: expect.anything(),
+                    })))
             })
     })
 })
@@ -28,6 +33,7 @@ describe('error handling', () => {
         return request(app)
             .get('/api/cat')
             .expect(404)
+            .then(response => expect(response.body.msg).toBe('Endpoint not found!'))
         .then() 
     })
 })
