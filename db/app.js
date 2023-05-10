@@ -4,8 +4,6 @@ const { getEndpoints } = require('../controllers/api.controllers');
 const { getReviewById } = require('../controllers/reviews.controllers');
 const app = express();
 
-
-
 app.get('/api/categories', getCategories);
 
 app.get('/api', getEndpoints)

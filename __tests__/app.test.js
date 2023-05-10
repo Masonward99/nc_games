@@ -54,8 +54,6 @@ describe('Get/api/reviews/:review_id', () => {
                 expect(result.body.review).toHaveProperty("owner");
                 expect(result.body.review).toHaveProperty("created_at");
             })
-        .then()
-          
     })
     it('returns 404 when there are no reviews with that id', () => {
         return request(app)
