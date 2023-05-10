@@ -44,7 +44,7 @@ describe('Get/api/reviews/:review_id', () => {
             .get("/api/reviews/1")
             .expect(200)
             .then((result) => {
-                expect(result.body.review).toHaveProperty('review_id')
+                expect(result.body.review['review_id']).toBe(1)
                 expect(result.body.review).toHaveProperty("title")
                 expect(result.body.review).toHaveProperty("review_body")
                 expect(result.body.review).toHaveProperty("designer");
@@ -61,13 +61,13 @@ describe('Get/api/reviews/:review_id', () => {
         return request(app)
             .get('/api/reviews/44')
             .expect(404)
-            .then()
+            .then(res => expect(res.body.msg).toBe('no review found with id 44'))
     })
     it('returns 400 when give a bad input', () => {
         return request(app)
             .get('/api/reviews/cat')
             .expect(400)
-            .then()
+            .then(res => expect(res.body.msg).toBe('bad request'))
     })
 })  
 describe('error handling', () => {
