@@ -5,6 +5,7 @@ const app = require('../db/app')
 const connection = require('../db/connection');
 const { string } = require('pg-format');
 const endpoint = require('../endpoints.json')
+const sorted = require('jest-sorted')
 
 beforeEach(() => seed(testData))
 afterAll(() => connection.end())
@@ -68,6 +69,44 @@ describe('Get/api/reviews/:review_id', () => {
             .then(res => expect(res.body.msg).toBe('bad request'))
     })
 })  
+describe('GET/api/reviews', () => {
+    it('should return an array of review objects', () => {
+        return request(app)
+          .get("/api/reviews")
+          .expect(200)
+            .then((results) => {
+                let data = results.body.reviews;
+                data.forEach(result => {
+                    expect(result).toHaveProperty('owner');
+                    expect(result).toHaveProperty("title");
+                    expect(result).toHaveProperty("review_id");
+                    expect(result).toHaveProperty("category");
+                    expect(result).toHaveProperty("review_img_url");
+                    expect(result).toHaveProperty("votes");
+                    expect(result).toHaveProperty("created_at");
+                    expect(result).toHaveProperty("comment_count");
+                    expect(result).toHaveProperty("created_at");
+                })
+          });
+    })
+    it('does not have review_body property', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then((results) => {
+                let data = results.body.reviews;
+                data.forEach(result => {
+                    expect(result).not.toHaveProperty('review_body')
+                })
+            })
+    })
+    it('is sorted by time descending', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(result => expect(result.body.reviews).toBeSortedBy('created_at', { descending: true }))
+    })
+})
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
         return request(app)
