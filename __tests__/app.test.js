@@ -4,7 +4,7 @@ const request = require('supertest')
 const app = require('../db/app')
 const connection = require('../db/connection');
 const { string } = require('pg-format');
-const Endpoint = require('../endpoints.json')
+const endpoint = require('../endpoints.json')
 
 beforeEach(() => seed(testData))
 afterAll(() => connection.end())
@@ -35,9 +35,41 @@ describe('GET/api/categories', () => {
             return request(app)
                 .get('/api')
                 .expect(200)
-                .then(data => expect(JSON.parse(data.body.endpoint)).toEqual(Endpoint))
+                .then(data => expect(JSON.parse(data.body.endpoint)).toEqual(endpoint))
             })
-        })
+    })
+describe('Get/api/reviews/:review_id', () => {
+    it('returns one review object', () => {
+        return request(app)
+            .get("/api/reviews/1")
+            .expect(200)
+            .then((result) => {
+                expect(result.body.review['review_id']).toBe(1)
+                expect(result.body.review).toHaveProperty("title")
+                expect(result.body.review).toHaveProperty("review_body")
+                expect(result.body.review).toHaveProperty("designer");
+                expect(result.body.review).toHaveProperty("review_img_url");
+                expect(result.body.review).toHaveProperty("votes");
+                expect(result.body.review).toHaveProperty("category");
+                expect(result.body.review).toHaveProperty("owner");
+                expect(result.body.review).toHaveProperty("created_at");
+            })
+        .then()
+          
+    })
+    it('returns 404 when there are no reviews with that id', () => {
+        return request(app)
+            .get('/api/reviews/44')
+            .expect(404)
+            .then(res => expect(res.body.msg).toBe('no review found with id 44'))
+    })
+    it('returns 400 when give a bad input', () => {
+        return request(app)
+            .get('/api/reviews/cat')
+            .expect(400)
+            .then(res => expect(res.body.msg).toBe('bad request'))
+    })
+})  
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
         return request(app)
