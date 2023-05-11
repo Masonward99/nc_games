@@ -5,6 +5,7 @@ const app = require('../db/app')
 const connection = require('../db/connection');
 const { string } = require('pg-format');
 const endpoint = require('../endpoints.json')
+const sorted = require('jest-sorted')
 
 beforeEach(() => seed(testData))
 afterAll(() => connection.end())
@@ -73,7 +74,23 @@ describe('get/api/reviews/:review_id/comments', () => {
         return request(app)
             .get('/api/reviews/2/comments')
             .expect(200)
-            .then()
+            .then(res => {
+                let resultsArr = res.body.comments
+                resultsArr.forEach(comment => {
+                    expect(comment).toHaveProperty('comment_id')
+                    expect(comment).toHaveProperty("votes");
+                    expect(comment).toHaveProperty("created_at");
+                    expect(comment).toHaveProperty("author");
+                    expect(comment).toHaveProperty("body");
+                    expect(comment).toHaveProperty("review_id");
+                });
+            })
+    })
+    it('arr is sorted by most recent comments', () => {
+        return request(app)
+            .get('/api/reviews/2/comments')
+            .expect(200)
+            .then(res => expect(res.body.comments).toBeSortedBy('created_at', {descending: true}))
     })
     it('returns a 404 error when passed a id that doesnt exist', () => {
         return request(app)
@@ -87,6 +104,12 @@ describe('get/api/reviews/:review_id/comments', () => {
             .expect(400)
             .then(res => expect(res.body.msg).toBe('bad request'))
     })
+    it('returns a 200 when passed given an input that returns an empty arr', () => {
+        return request(app)
+            .get('/api/reviews/1/comments')
+            .expect(200)
+            .then()
+    })
 })
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
@@ -94,6 +117,6 @@ describe('error handling', () => {
             .get('/api/cat')
             .expect(404)
             .then(response => expect(response.body.msg).toBe('Endpoint not found!'))
-        .then() 
+            .then() 
     })
 })
