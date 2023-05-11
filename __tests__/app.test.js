@@ -86,7 +86,7 @@ describe('Get/api/reviews/:review_id', () => {
                         review_id: expect.any(Number),
                         created_at: expect.any(String),
                         votes: expect.any(Number),
-                        comment_id: expect.any(Number)
+                        comment_id: 7
                     }))           
                 })
         })
