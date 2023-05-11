@@ -1,4 +1,5 @@
 const connection = require("../db/connection");
+const { checkExists } = require("../db/seeds/utils");
 
 exports.findReviewById = (id) => {
     const idArray = [id];
@@ -12,5 +13,17 @@ exports.findReviewById = (id) => {
                 })
             }
             return review;
+        })
+}
+
+exports.findCommentByReview =  (id) => {
+    const idArray = [id]
+    return connection.query(`SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC`, idArray)
+        .then(result => result.rows)
+        .then(async (res) => {
+            if (!res.length) {
+                await checkExists('reviews', 'review_id', idArray)
+            }
+            return res
         })
 }
