@@ -100,6 +100,13 @@ describe('Get/api/reviews/:review_id', () => {
             .expect(400)
             .then(res => expect(res.body.msg).toBe('bad request'))
     })
+    it("gets an 404 error when review doesnt exist", () => {
+      return request(app)
+        .post("/api/reviews/44/comments")
+        .send({ username: "god", body: "I like this" })
+        .expect(400)
+        .then((res) => expect(res.body.msg).toBe("bad request"));
+    });
 })  
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
