@@ -77,15 +77,17 @@ describe('GET/api/reviews', () => {
             .then((results) => {
                 let data = results.body.reviews;
                 data.forEach(result => {
-                    expect(result).toHaveProperty('owner');
-                    expect(result).toHaveProperty("title");
-                    expect(result).toHaveProperty("review_id");
-                    expect(result).toHaveProperty("category");
-                    expect(result).toHaveProperty("review_img_url");
-                    expect(result).toHaveProperty("votes");
-                    expect(result).toHaveProperty("created_at");
-                    expect(result).toHaveProperty("comment_count");
-                    expect(result).toHaveProperty("created_at");
+                    expect(result).toEqual(expect.objectContaining({
+                        owner: expect.any(String),
+                        title: expect.any(String),
+                        review_id: expect.any(Number),
+                        category: expect.any(String),
+                        votes: expect.any(Number),
+                        review_img_url: expect.any(String),
+                        created_at: expect.any(String),
+                        comment_count: expect.any(String),
+                        designer: expect.any(String)
+                    }))
                 })
           });
     })
