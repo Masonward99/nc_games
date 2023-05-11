@@ -104,8 +104,8 @@ describe('Get/api/reviews/:review_id', () => {
       return request(app)
         .post("/api/reviews/44/comments")
         .send({ username: "god", body: "I like this" })
-        .expect(400)
-        .then((res) => expect(res.body.msg).toBe("bad request"));
+        .expect(404)
+        .then((res) => expect(res.body.msg).toBe("Resource not found"));
     });
 })  
 describe('error handling', () => {
