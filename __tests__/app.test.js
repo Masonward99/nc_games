@@ -44,18 +44,22 @@ describe('Get/api/reviews/:review_id', () => {
         return request(app)
             .get("/api/reviews/1")
             .expect(200)
-            .then((result) => {
-                expect(result.body.review['review_id']).toBe(1)
-                expect(result.body.review).toHaveProperty("title")
-                expect(result.body.review).toHaveProperty("review_body")
-                expect(result.body.review).toHaveProperty("designer");
-                expect(result.body.review).toHaveProperty("review_img_url");
-                expect(result.body.review).toHaveProperty("votes");
-                expect(result.body.review).toHaveProperty("category");
-                expect(result.body.review).toHaveProperty("owner");
-                expect(result.body.review).toHaveProperty("created_at");
+            .then((data) => {
+                let result = data.body.review
+                expect(result['review_id']).toBe(1)
+                expect(result).toEqual(expect.objectContaining({
+                    owner: expect.any(String),
+                    title: expect.any(String),
+                    review_id: expect.any(Number),
+                    category: expect.any(String),
+                    votes: expect.any(Number),
+                    review_img_url: expect.any(String),
+                    created_at: expect.any(String),
+                    designer: expect.any(String)
+                }))
             })
     })
+        
     it('returns 404 when there are no reviews with that id', () => {
         return request(app)
             .get('/api/reviews/44')
