@@ -1,5 +1,7 @@
 const connection = require("../db/connection");
-const { calculateCommentCount } = require("../db/seeds/utils");
+
+const { checkExists } = require("../db/seeds/utils");
+
 const format = require('pg-format')
 
 exports.findReviewById = (id) => {
@@ -17,6 +19,19 @@ exports.findReviewById = (id) => {
         })
 }
 
+
+exports.findCommentByReview =  (id) => {
+    const idArray = [id]
+    return connection.query(`SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC`, idArray)
+        .then(result => result.rows)
+        .then(async (res) => {
+            if (!res.length) {
+                await checkExists('reviews', 'review_id', idArray)
+            }
+            return res
+        })
+}
+
 exports.findReviews = () => {
     return connection
       .query(
@@ -24,3 +39,4 @@ exports.findReviews = () => {
       )
       .then((results) => results.rows);
 }
+

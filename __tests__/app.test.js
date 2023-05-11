@@ -73,6 +73,51 @@ describe('Get/api/reviews/:review_id', () => {
             .then(res => expect(res.body.msg).toBe('bad request'))
     })
 })  
+
+
+describe('get/api/reviews/:review_id/comments', () => {
+    it('returns an array of comments', () => {
+        return request(app)
+            .get('/api/reviews/2/comments')
+            .expect(200)
+            .then(res => {
+                let resultsArr = res.body.comments
+                resultsArr.forEach(comment => {
+                    expect(comment).toHaveProperty('comment_id')
+                    expect(comment).toHaveProperty("votes");
+                    expect(comment).toHaveProperty("created_at");
+                    expect(comment).toHaveProperty("author");
+                    expect(comment).toHaveProperty("body");
+                    expect(comment).toHaveProperty("review_id");
+                });
+            })
+    })
+    it('arr is sorted by most recent comments', () => {
+        return request(app)
+            .get('/api/reviews/2/comments')
+            .expect(200)
+            .then(res => expect(res.body.comments).toBeSortedBy('created_at', {descending: true}))
+    })
+    it('returns a 404 error when passed a id that doesnt exist', () => {
+        return request(app)
+            .get('/api/reviews/44/comments')
+            .expect(404)
+        .then(response => expect(response.body.msg).toBe('Resource not found'))
+    })
+    it('returns a 400 error when given a bad input', () => {
+        return request(app)
+            .get('/api/reviews/cat/comments')
+            .expect(400)
+            .then(res => expect(res.body.msg).toBe('bad request'))
+    })
+    it('returns a 200 when passed given an input that returns an empty arr', () => {
+        return request(app)
+            .get('/api/reviews/1/comments')
+            .expect(200)
+            .then()
+    })
+})
+
 describe('GET/api/reviews', () => {
     it('should return an array of review objects', () => {
         return request(app)
@@ -120,6 +165,6 @@ describe('error handling', () => {
             .get('/api/cat')
             .expect(404)
             .then(response => expect(response.body.msg).toBe('Endpoint not found!'))
-        .then() 
+            .then() 
     })
 })
