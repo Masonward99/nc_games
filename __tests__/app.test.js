@@ -80,6 +80,7 @@ describe('GET/api/reviews', () => {
           .expect(200)
             .then((results) => {
                 let data = results.body.reviews;
+                expect(data.length).toBe(13)
                 data.forEach(result => {
                     expect(result).toEqual(expect.objectContaining({
                         owner: expect.any(String),
