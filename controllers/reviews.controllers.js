@@ -1,6 +1,5 @@
 
 const { findReviewById, findCommentByReview, findReviews } = require("../models/reviews.models");
-const { findReviewById, findReviews } = require("../models/reviews.models");
 
 exports.getReviewById = (req,res,next) => {
     const id = req.params.review_id;
