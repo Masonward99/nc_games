@@ -75,17 +75,30 @@ describe('Get/api/reviews/:review_id', () => {
                 .expect(201)
                 .then(result => {
                     const comment = result.body.comment
-                    console.log(comment)
                     expect(comment).toEqual(expect.objectContaining({
-                        // body: expect.any(String),
-                        // author: expect.any(String),
-                        // review_id: expect.any(Number),
-                        // created_at: expect.any(String),
-                        // votes: expect.any(Number),
-                        // comment_id: expect.any(Number)
-                    }))
+                        body: expect.any(String),
+                        author: expect.any(String),
+                        review_id: expect.any(Number),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_id: expect.any(Number)
+                    }))           
                 })
         })
+    })
+    it('gets an 400 error when no data is sent', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({})
+            .expect(400)
+        .then(res => expect(res.body.msg).toBe('bad request'))
+    })
+    it('get an 400 error when username is not valid', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({ username: 'god', body: 'I like this' })
+            .expect(400)
+            .then(res => expect(res.body.msg).toBe('bad request'))
     })
 })  
 describe('error handling', () => {
