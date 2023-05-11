@@ -98,17 +98,32 @@ describe('Get/api/reviews/:review_id', () => {
             .expect(400)
         .then(res => expect(res.body.msg).toBe('bad request'))
     })
-    it('get an 400 error when username is not valid', () => {
+    it('get an 404 error when username is valid but not found', () => {
         return request(app)
             .post('/api/reviews/1/comments')
             .send({ username: 'god', body: 'I like this' })
-            .expect(400)
-            .then(res => expect(res.body.msg).toBe('bad request'))
+            .expect(404)
+            .then(res => expect(res.body.msg).toBe('Resource not found'))
     })
+    it("get an 400 error when missing data", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({body: "I like this" })
+        .expect(400)
+        .then((res) => expect(res.body.msg).toBe("bad request"));
+    });
+    it('gets a 400 error when review id is invalid', () => {
+        return request(app)
+          .post("/api/reviews/cat/comments")
+          .send({ username: "mallionaire", body: "I like this" })
+          .expect(400)
+          .then((res) => expect(res.body.msg).toBe("bad request"));
+    })
+
     it("gets an 404 error when review doesnt exist", () => {
       return request(app)
         .post("/api/reviews/44/comments")
-        .send({ username: "god", body: "I like this" })
+        .send({ username: "mallionaire", body: "I like this" })
         .expect(404)
         .then((res) => expect(res.body.msg).toBe("Resource not found"));
     });
