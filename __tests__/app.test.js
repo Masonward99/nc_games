@@ -67,15 +67,15 @@ describe('Get/api/reviews/:review_id', () => {
             .expect(400)
             .then(res => expect(res.body.msg).toBe('bad request'))
     })
-    // describe('POST/api/reviews/:review_id/comments', () => {
-    //     it('returns the posted comment', () => {
-    //         return request(app)
-    //             .post("/api/reviews/1/comments")
-    //             .send({ username: 'mallionaire', body: 'great game' } )
-    //             .expect(201)
-    //             .then()
-    //     })
-    // })
+    describe('POST/api/reviews/:review_id/comments', () => {
+        it('returns the posted comment', () => {
+            return request(app)
+                .post("/api/reviews/1/comments")
+                .send({ username: 'mallionaire', body: 'great game' } )
+                .expect(201)
+                .then(result => console.log(result.body))
+        })
+    })
 })  
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
