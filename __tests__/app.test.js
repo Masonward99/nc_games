@@ -73,7 +73,18 @@ describe('Get/api/reviews/:review_id', () => {
                 .post("/api/reviews/1/comments")
                 .send({ username: 'mallionaire', body: 'great game' } )
                 .expect(201)
-                .then(result => console.log(result.body))
+                .then(result => {
+                    const comment = result.body.comment
+                    console.log(comment)
+                    expect(comment).toEqual(expect.objectContaining({
+                        // body: expect.any(String),
+                        // author: expect.any(String),
+                        // review_id: expect.any(Number),
+                        // created_at: expect.any(String),
+                        // votes: expect.any(Number),
+                        // comment_id: expect.any(Number)
+                    }))
+                })
         })
     })
 })  
