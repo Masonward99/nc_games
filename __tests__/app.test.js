@@ -44,18 +44,22 @@ describe('Get/api/reviews/:review_id', () => {
         return request(app)
             .get("/api/reviews/1")
             .expect(200)
-            .then((result) => {
-                expect(result.body.review['review_id']).toBe(1)
-                expect(result.body.review).toHaveProperty("title")
-                expect(result.body.review).toHaveProperty("review_body")
-                expect(result.body.review).toHaveProperty("designer");
-                expect(result.body.review).toHaveProperty("review_img_url");
-                expect(result.body.review).toHaveProperty("votes");
-                expect(result.body.review).toHaveProperty("category");
-                expect(result.body.review).toHaveProperty("owner");
-                expect(result.body.review).toHaveProperty("created_at");
+            .then((data) => {
+                let result = data.body.review
+                expect(result['review_id']).toBe(1)
+                expect(result).toEqual(expect.objectContaining({
+                    owner: expect.any(String),
+                    title: expect.any(String),
+                    review_id: expect.any(Number),
+                    category: expect.any(String),
+                    votes: expect.any(Number),
+                    review_img_url: expect.any(String),
+                    created_at: expect.any(String),
+                    designer: expect.any(String)
+                }))
             })
     })
+        
     it('returns 404 when there are no reviews with that id', () => {
         return request(app)
             .get('/api/reviews/44')
@@ -69,6 +73,8 @@ describe('Get/api/reviews/:review_id', () => {
             .then(res => expect(res.body.msg).toBe('bad request'))
     })
 })  
+
+
 describe('get/api/reviews/:review_id/comments', () => {
     it('returns an array of comments', () => {
         return request(app)
@@ -109,6 +115,48 @@ describe('get/api/reviews/:review_id/comments', () => {
             .get('/api/reviews/1/comments')
             .expect(200)
             .then()
+    })
+})
+
+describe('GET/api/reviews', () => {
+    it('should return an array of review objects', () => {
+        return request(app)
+          .get("/api/reviews")
+          .expect(200)
+            .then((results) => {
+                let data = results.body.reviews;
+                expect(data.length).toBe(13)
+                data.forEach(result => {
+                    expect(result).toEqual(expect.objectContaining({
+                        owner: expect.any(String),
+                        title: expect.any(String),
+                        review_id: expect.any(Number),
+                        category: expect.any(String),
+                        votes: expect.any(Number),
+                        review_img_url: expect.any(String),
+                        created_at: expect.any(String),
+                        comment_count: expect.any(String),
+                        designer: expect.any(String)
+                    }))
+                })
+          });
+    })
+    it('does not have review_body property', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then((results) => {
+                let data = results.body.reviews;
+                data.forEach(result => {
+                    expect(result).not.toHaveProperty('review_body')
+                })
+            })
+    })
+    it('is sorted by time descending', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(result => expect(result.body.reviews).toBeSortedBy('created_at', { descending: true }))
     })
 })
 describe('error handling', () => {
