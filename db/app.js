@@ -5,6 +5,7 @@ const { getEndpoints } = require('../controllers/api.controllers');
 const { postCommentByReviewId } = require('../controllers/comments.controllers');
 
 const { getReviewById, getCommentsByReview, getReviews } = require('../controllers/reviews.controllers');
+const { getUsers } = require('../controllers/users.controllers');
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.get('/api/reviews/:review_id/comments',getCommentsByReview)
 
 
 app.get('/api/reviews', getReviews)
+
+app.get('/api/users', getUsers)
 
 
 app.use('*', ( req, res, next) => {
