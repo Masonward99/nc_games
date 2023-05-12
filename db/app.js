@@ -2,11 +2,12 @@ const express = require('express');
 const { getCategories } = require('../controllers/categories.controllers');
 const { getEndpoints } = require('../controllers/api.controllers');
 
+const { getReviewById, getCommentsByReview, getReviews, patchReview } = require('../controllers/reviews.controllers');
 const { postCommentByReviewId } = require('../controllers/comments.controllers');
 
-const { getReviewById, getCommentsByReview, getReviews } = require('../controllers/reviews.controllers');
 
 const app = express();
+app.use(express.json())
 
 app.use(express.json())
 
@@ -22,8 +23,10 @@ app.post('/api/reviews/:review_id/comments',postCommentByReviewId)
 
 app.get('/api/reviews/:review_id/comments',getCommentsByReview)
 
-
 app.get('/api/reviews', getReviews)
+
+
+app.patch('/api/reviews/:review_id',patchReview )
 
 
 app.use('*', ( req, res, next) => {

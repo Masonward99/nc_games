@@ -40,3 +40,11 @@ exports.findReviews = () => {
       .then((results) => results.rows);
 }
 
+exports.changeReview = async (id, votes) => {
+    let idArray = [id]
+    await checkExists('reviews', 'review_id', idArray)
+    return connection.query('UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *', [votes, id])
+    .then(res => res.rows[0])
+    
+}
+
