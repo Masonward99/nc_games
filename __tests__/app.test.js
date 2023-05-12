@@ -269,6 +269,13 @@ describe('patch/api/reviews/:review_id', () => {
              );
            })
     })
+    it('gets 400 error when passed a invalid id', () => {
+         return request(app)
+           .patch("/api/reviews/bannana")
+           .send({ inc_votes: 25 })
+           .expect(400)
+           .then((res) => expect(res.body.msg).toBe("bad request"));
+    })
 })
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
