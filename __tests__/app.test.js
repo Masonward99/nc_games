@@ -72,6 +72,61 @@ describe('Get/api/reviews/:review_id', () => {
             .expect(400)
             .then(res => expect(res.body.msg).toBe('bad request'))
     })
+    describe('POST/api/reviews/:review_id/comments', () => {
+        it('returns the posted comment', () => {
+            return request(app)
+                .post("/api/reviews/1/comments")
+                .send({ username: 'mallionaire', body: 'great game' } )
+                .expect(201)
+                .then(result => {
+                    const comment = result.body.comment
+                    expect(comment).toEqual(expect.objectContaining({
+                        body: expect.any(String),
+                        author: expect.any(String),
+                        review_id: expect.any(Number),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_id: 7
+                    }))           
+                })
+        })
+    })
+    it('gets an 400 error when no data is sent', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({})
+            .expect(400)
+        .then(res => expect(res.body.msg).toBe('bad request'))
+    })
+    it('get an 404 error when username is valid but not found', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({ username: 'god', body: 'I like this' })
+            .expect(404)
+            .then(res => expect(res.body.msg).toBe('Resource not found'))
+    })
+    it("get an 400 error when missing data", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({body: "I like this" })
+        .expect(400)
+        .then((res) => expect(res.body.msg).toBe("bad request"));
+    });
+    it('gets a 400 error when review id is invalid', () => {
+        return request(app)
+          .post("/api/reviews/cat/comments")
+          .send({ username: "mallionaire", body: "I like this" })
+          .expect(400)
+          .then((res) => expect(res.body.msg).toBe("bad request"));
+    })
+
+    it("gets an 404 error when review doesnt exist", () => {
+      return request(app)
+        .post("/api/reviews/44/comments")
+        .send({ username: "mallionaire", body: "I like this" })
+        .expect(404)
+        .then((res) => expect(res.body.msg).toBe("Resource not found"));
+    });
 })  
 
 
@@ -180,12 +235,74 @@ describe('GET/api/reviews', () => {
         .then(res=>expect(res.body.msg).toBe('bad request'))
     })
 })
+describe('patch/api/reviews/:review_id', () => {
+    it('returns the updated review', () => {
+        return request(app)
+            .patch('/api/reviews/1')
+            .send({ inc_votes: 25 })
+            .expect(200)
+            .then(res => {
+                let review = res.body.review;
+                expect(review).toEqual(expect.objectContaining({
+                    votes: 26,
+                    review_id: 1,
+                    created_at: expect.any(String),
+                    title: expect.any(String),
+                    designer: expect.any(String),
+                    owner: expect.any(String),
+                    review_img_url: expect.any(String),
+                    category:expect.any(String)
+                }))
+            })
+    })
+    it('returns 404 when review_id doesnt exist', () => {
+        return request(app)
+          .patch("/api/reviews/100")
+          .send({ inc_votes: 25 })
+            .expect(404)
+        .then(res => expect(res.body.msg).toBe('Resource not found'))
+    })
+    it('returns a 400 when object is in wrong format', () => {
+        return request(app)
+          .patch("/api/reviews/1")
+          .send({ votes: 25 })
+          .expect(400)
+          .then((res) => expect(res.body.msg).toBe("bad request"))
+    })
+    it('can accept negative review numbers', () => {
+         return request(app)
+           .patch("/api/reviews/1")
+           .send({ inc_votes: -1 })
+           .expect(200)
+           .then((res) => {
+             let review = res.body.review;
+             expect(review).toEqual(
+               expect.objectContaining({
+                 votes: 0,
+                 review_id: 1,
+                 created_at: expect.any(String),
+                 title: expect.any(String),
+                 designer: expect.any(String),
+                 owner: expect.any(String),
+                 review_img_url: expect.any(String),
+                 category: expect.any(String),
+               })
+             );
+           })
+    })
+    it('gets 400 error when passed a invalid id', () => {
+         return request(app)
+           .patch("/api/reviews/bannana")
+           .send({ inc_votes: 25 })
+           .expect(400)
+           .then((res) => expect(res.body.msg).toBe("bad request"));
+    })
+})
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
         return request(app)
             .get('/api/cat')
             .expect(404)
             .then(response => expect(response.body.msg).toBe('Endpoint not found!'))
-            .then() 
     })
 })
