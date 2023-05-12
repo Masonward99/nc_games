@@ -158,6 +158,27 @@ describe('GET/api/reviews', () => {
             .expect(200)
             .then(result => expect(result.body.reviews).toBeSortedBy('created_at', { descending: true }))
     })
+    describe('DELETE/api/comments/:comment_id', () => {
+        it('can remove a comment with id that exists', ()=> {
+            return request(app)
+                .delete('/api/comments/2')
+                .expect(204)
+                .then(()=>connection.query('SELECT * FROM comments WHERE comment_id = 2'))
+                .then(res => expect(res.rows[0]).toEqual(undefined))
+        })
+    })
+    it('gets a 404 error when passed a comment_id that doesnt exists', () => {
+        return request(app)
+            .delete('/api/comments/40')
+            .expect(404)
+        .then(res=> expect(res.body.msg).toBe('Resource not found'))
+    })
+    it('gets a 400 error when passed a comment_id that is not valid', () => {
+        return request(app)
+            .delete('/api/comments/cat')
+            .expect(400)
+        .then(res=>expect(res.body.msg).toBe('bad request'))
+    })
 })
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
