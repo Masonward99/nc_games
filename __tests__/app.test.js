@@ -213,6 +213,90 @@ describe('GET/api/reviews', () => {
             .expect(200)
             .then(result => expect(result.body.reviews).toBeSortedBy('created_at', { descending: true }))
     })
+    describe('DELETE/api/comments/:comment_id', () => {
+        it('can remove a comment with id that exists', ()=> {
+            return request(app)
+                .delete('/api/comments/2')
+                .expect(204)
+                .then(()=>connection.query('SELECT * FROM comments WHERE comment_id = 2'))
+                .then(res => expect(res.rows[0]).toEqual(undefined))
+        })
+    })
+    it('gets a 404 error when passed a comment_id that doesnt exists', () => {
+        return request(app)
+            .delete('/api/comments/40')
+            .expect(404)
+        .then(res=> expect(res.body.msg).toBe('Resource not found'))
+    })
+    it('gets a 400 error when passed a comment_id that is not valid', () => {
+        return request(app)
+            .delete('/api/comments/cat')
+            .expect(400)
+        .then(res=>expect(res.body.msg).toBe('bad request'))
+    })
+})
+describe('patch/api/reviews/:review_id', () => {
+    it('returns the updated review', () => {
+        return request(app)
+            .patch('/api/reviews/1')
+            .send({ inc_votes: 25 })
+            .expect(200)
+            .then(res => {
+                let review = res.body.review;
+                expect(review).toEqual(expect.objectContaining({
+                    votes: 26,
+                    review_id: 1,
+                    created_at: expect.any(String),
+                    title: expect.any(String),
+                    designer: expect.any(String),
+                    owner: expect.any(String),
+                    review_img_url: expect.any(String),
+                    category:expect.any(String)
+                }))
+            })
+    })
+    it('returns 404 when review_id doesnt exist', () => {
+        return request(app)
+          .patch("/api/reviews/100")
+          .send({ inc_votes: 25 })
+            .expect(404)
+        .then(res => expect(res.body.msg).toBe('Resource not found'))
+    })
+    it('returns a 400 when object is in wrong format', () => {
+        return request(app)
+          .patch("/api/reviews/1")
+          .send({ votes: 25 })
+          .expect(400)
+          .then((res) => expect(res.body.msg).toBe("bad request"))
+    })
+    it('can accept negative review numbers', () => {
+         return request(app)
+           .patch("/api/reviews/1")
+           .send({ inc_votes: -1 })
+           .expect(200)
+           .then((res) => {
+             let review = res.body.review;
+             expect(review).toEqual(
+               expect.objectContaining({
+                 votes: 0,
+                 review_id: 1,
+                 created_at: expect.any(String),
+                 title: expect.any(String),
+                 designer: expect.any(String),
+                 owner: expect.any(String),
+                 review_img_url: expect.any(String),
+                 category: expect.any(String),
+               })
+             );
+           })
+    })
+    it('gets 400 error when passed a invalid id', () => {
+         return request(app)
+           .patch("/api/reviews/bannana")
+           .send({ inc_votes: 25 })
+           .expect(400)
+           .then((res) => expect(res.body.msg).toBe("bad request"));
+    })
 })
 describe('get users', () => {
     it('returns an array of user objects', () => {
@@ -237,6 +321,5 @@ describe('error handling', () => {
             .get('/api/cat')
             .expect(404)
             .then(response => expect(response.body.msg).toBe('Endpoint not found!'))
-            .then() 
     })
 })
