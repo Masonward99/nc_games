@@ -298,6 +298,23 @@ describe('patch/api/reviews/:review_id', () => {
            .then((res) => expect(res.body.msg).toBe("bad request"));
     })
 })
+describe('get users', () => {
+    it('returns an array of user objects', () => {
+        return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(result => {
+                const users = result.body.users;
+                expect(users.length).toBe(4)
+                users.forEach(user => expect(user).toEqual(expect.objectContaining({
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    avatar_url:expect.any(String)
+                })))
+
+        })
+    })
+})
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
         return request(app)

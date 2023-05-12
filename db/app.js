@@ -7,7 +7,7 @@ const {deleteCommentById, postCommentByReviewId }=require('../controllers/commen
 
 const { getReviewById, getCommentsByReview, getReviews, patchReview } = require('../controllers/reviews.controllers');
 
-
+const { getUsers } = require('../controllers/users.controllers');
 
 
 const app = express();
@@ -30,6 +30,8 @@ app.post('/api/reviews/:review_id/comments',postCommentByReviewId)
 app.get('/api/reviews/:review_id/comments',getCommentsByReview)
 
 app.get('/api/reviews', getReviews)
+
+app.get('/api/users', getUsers)
 
 
 app.delete('/api/comments/:comment_id', deleteCommentById)
