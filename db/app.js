@@ -4,6 +4,7 @@ const { getEndpoints } = require('../controllers/api.controllers');
 
 const {deleteCommentById, postCommentByReviewId }=require('../controllers/comments.controllers')
 
+const cors = require('cors')
 
 const { getReviewById, getCommentsByReview, getReviews, patchReview } = require('../controllers/reviews.controllers');
 
@@ -11,6 +12,8 @@ const { getUsers } = require('../controllers/users.controllers');
 
 
 const app = express();
+
+app.use(cors())
 app.use(express.json())
 
 app.get('/api/categories', getCategories);
