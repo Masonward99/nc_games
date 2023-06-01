@@ -32,10 +32,17 @@ exports.findCommentByReview =  (id) => {
         })
 }
 
-exports.findReviews = () => {
+exports.findReviews = (query) => {
+    let queryStr
+    if (query.category) {
+        let category = query.category
+        queryStr = `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id  WHERE reviews.category = '${category}' GROUP BY reviews.review_id ORDER BY reviews.created_at DESC`;
+    } else {
+        queryStr = `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY reviews.created_at DESC`;
+    }
     return connection
       .query(
-        `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY reviews.created_at DESC`
+        queryStr
       )
       .then((results) => results.rows);
 }

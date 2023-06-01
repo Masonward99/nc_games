@@ -173,7 +173,7 @@ describe('get/api/reviews/:review_id/comments', () => {
     })
 })
 
-describe('GET/api/reviews', () => {
+describe.only('GET/api/reviews', () => {
     it('should return an array of review objects', () => {
         return request(app)
           .get("/api/reviews")
@@ -212,6 +212,12 @@ describe('GET/api/reviews', () => {
             .get('/api/reviews')
             .expect(200)
             .then(result => expect(result.body.reviews).toBeSortedBy('created_at', { descending: true }))
+    })
+    it('accepts queries', () => {
+        return request(app)
+            .get('/api/reviews?category=strategy')
+            .expect(200)
+        .then()
     })
     describe('DELETE/api/comments/:comment_id', () => {
         it('can remove a comment with id that exists', ()=> {

@@ -16,7 +16,8 @@ exports.getCommentsByReview = (req, res, next) => {
     .catch(next)
 }
 exports.getReviews = (req, res, next) => {
-    findReviews()
+    const query = req.query
+    findReviews(query)
         .then(reviews => res.status(200).send({ reviews }))
         .catch(next)
 }
