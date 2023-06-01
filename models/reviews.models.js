@@ -33,8 +33,6 @@ exports.findCommentByReview =  (id) => {
 }
 
 exports.findReviews = (category, sortBy, order) => {
-    let queryStr
-    console.log(order)
     if (!['asc', 'desc'].includes(order)) {
         return Promise.reject({status:400,msg:'invalid order query'})
     }
@@ -46,10 +44,10 @@ exports.findReviews = (category, sortBy, order) => {
           `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id  WHERE reviews.category = $1 GROUP BY reviews.review_id ORDER BY reviews.${sortBy} ${order};`,[category]
         )
         .then(results => results.rows)
-    } else {
+    }else{
           return connection
             .query(
-              `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY reviews.${sortBy} ${order};`,
+              `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY ${sortBy} ${order};`,
             )
             .then((results) => results.rows);
     }
@@ -59,7 +57,7 @@ exports.changeReview = async (id, votes) => {
     let idArray = [id]
     await checkExists('reviews', 'review_id', idArray)
     return connection.query('UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *', [votes, id])
-    .then(res => res.rows[0])
+    .then(res => res.rows)
     
 }
 

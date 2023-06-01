@@ -217,7 +217,12 @@ describe.only('GET/api/reviews', () => {
         return request(app)
             .get('/api/reviews?category=strategy')
             .expect(200)
-        .then()
+        .then(data=> console.log(data.body.reviews))
+    })
+    it('can sort by comment_count', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=comment_count')
+            .then(data=> console.log(data.body.reviews) )
     })
     describe('DELETE/api/comments/:comment_id', () => {
         it('can remove a comment with id that exists', ()=> {
