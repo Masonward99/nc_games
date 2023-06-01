@@ -17,7 +17,16 @@ exports.getCommentsByReview = (req, res, next) => {
 }
 exports.getReviews = (req, res, next) => {
     const query = req.query
-    findReviews(query)
+    const category = query.category
+    let sortBy = query.sort_by
+    let order = query.order
+    if (!sortBy) {
+        sortBy= 'created_at'
+    }
+    if (!order) {
+        order = 'desc'
+    }
+    findReviews(category, sortBy, order)
         .then(reviews => res.status(200).send({ reviews }))
         .catch(next)
 }

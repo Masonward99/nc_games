@@ -32,19 +32,27 @@ exports.findCommentByReview =  (id) => {
         })
 }
 
-exports.findReviews = (query) => {
+exports.findReviews = (category, sortBy, order) => {
     let queryStr
-    if (query.category) {
-        let category = query.category
-        queryStr = `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id  WHERE reviews.category = '${category}' GROUP BY reviews.review_id ORDER BY reviews.created_at DESC`;
-    } else {
-        queryStr = `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY reviews.created_at DESC`;
+    console.log(order)
+    if (!['asc', 'desc'].includes(order)) {
+        return Promise.reject({status:400,msg:'invalid order query'})
     }
-    return connection
-      .query(
-        queryStr
-      )
-      .then((results) => results.rows);
+    if (!['category', 'created_at', 'comment_count', 'votes', 'category', 'review_id'].includes(sortBy)) {
+        return Promise.reject({status:400, msg:'invalid sort_by query'})
+    }
+    if (category) {
+        return connection.query(
+          `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id  WHERE reviews.category = $1 GROUP BY reviews.review_id ORDER BY reviews.created_at ${order};`,[category]
+        )
+        .then(results => results.rows)
+    } else {
+          return connection
+            .query(
+              `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY reviews.created_at ${order};`,
+            )
+            .then((results) => results.rows);
+    }
 }
 
 exports.changeReview = async (id, votes) => {
