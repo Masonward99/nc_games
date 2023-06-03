@@ -384,3 +384,79 @@ describe('post/users/:username', () => {
             .then()
     })
 })
+describe('patch/api/comments/:comment_id', () => {
+    it('returns the updated comments', ()=> {
+        return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then(res => {
+                expect(res.body.comment).toEqual({
+                  comment_id: 1,
+                  body: "I loved this game too!",
+                  votes: 17,
+                  author: "bainesface",
+                  review_id: 2,
+                  created_at: "2017-11-22T12:43:33.389Z",
+                });
+            })
+        
+    })
+    it('returns a 404 error when comment_id does not exist', () => {
+        return request(app)
+            .patch('/api/comments/900')
+            .send({inc_votes:1})
+         .expect(404)
+    })
+    it('return a 400 error when body is empty', () => {
+        return request(app)
+            .patch('/api/comments/1')
+            .send()
+            .expect(400)
+    })
+    it('returns a 400 error when incCount is not a number', () => {
+        return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: 'potato' })
+            .expect(400)
+    })
+    it('returns a 400 error when passed an invalid comment id', () => {
+        return request(app)
+            .patch('/api/comments/dog')
+            .send({ inc_votes: 2 })
+            .expect(400)
+    })
+    it('can increment votes by more than 1', () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: 25 })
+          .expect(200)
+          .then((res) => {
+            expect(res.body.comment).toEqual({
+              comment_id: 1,
+              body: "I loved this game too!",
+              votes: 41,
+              author: "bainesface",
+              review_id: 2,
+              created_at: "2017-11-22T12:43:33.389Z",
+            });
+          });
+    })
+    it('can accept negative numbers', () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: -25 })
+          .expect(200)
+          .then((res) => {
+            expect(res.body.comment).toEqual({
+              comment_id: 1,
+              body: "I loved this game too!",
+              votes: -9,
+              author: "bainesface",
+              review_id: 2,
+              created_at: "2017-11-22T12:43:33.389Z",
+            });
+          });
+        
+    })
+})

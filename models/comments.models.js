@@ -21,5 +21,13 @@ exports.addCommentsByReviewId = async (body, id) => {
     await checkExists('reviews', 'review_id', idArray)
     await checkExists('users','username',[body.username] )
     return connection.query(`INSERT INTO comments (review_id, author, body) VALUES ($1, $2, $3) RETURNING *`, [id, body.username, body.body])
-    .then(result  => result.rows[0])
+    .then(result  =>result.rows[0])
+}
+
+exports.updateComments = async (incVotes, id) => {
+    let idArray = [id]
+    await checkExists('comments', 'comment_id', idArray)
+    return connection.query('UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *',[incVotes, id])
+        .then(res => res.rows[0])
+
 }
