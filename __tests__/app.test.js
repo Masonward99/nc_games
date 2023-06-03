@@ -55,7 +55,8 @@ describe('Get/api/reviews/:review_id', () => {
                     votes: expect.any(Number),
                     review_img_url: expect.any(String),
                     created_at: expect.any(String),
-                    designer: expect.any(String)
+                    designer: expect.any(String),
+                    comment_count:expect.any(String)
                 }))
             })
     })
@@ -173,7 +174,7 @@ describe('get/api/reviews/:review_id/comments', () => {
     })
 })
 
-describe.only('GET/api/reviews', () => {
+describe('GET/api/reviews', () => {
     it('should return an array of review objects', () => {
         return request(app)
           .get("/api/reviews")

@@ -6,7 +6,7 @@ const format = require('pg-format')
 
 exports.findReviewById = (id) => {
     const idArray = [id];
-    return connection.query(`SELECT * FROM reviews WHERE review_id = $1`, idArray)
+    return connection.query(`SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer,reviews.review_body  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id  WHERE reviews.review_id = $1 GROUP BY reviews.review_id`, idArray)
         .then(result => {
             let review = result.rows[0];
             if (!review) {
@@ -70,7 +70,7 @@ exports.changeReview = async (id, votes) => {
     let idArray = [id]
     await checkExists('reviews', 'review_id', idArray)
     return connection.query('UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *', [votes, id])
-    .then(res => res.rows)
+    .then(res => res.rows[0])
     
 }
 
