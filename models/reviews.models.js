@@ -39,17 +39,30 @@ exports.findReviews = (category, sortBy, order) => {
     if (!['category', 'created_at', 'comment_count', 'votes', 'category', 'review_id'].includes(sortBy)) {
         return Promise.reject({status:400, msg:'invalid sort_by query'})
     }
+
     if (category) {
         return connection.query(
           `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id  WHERE reviews.category = $1 GROUP BY reviews.review_id ORDER BY reviews.${sortBy} ${order};`,[category]
         )
-        .then(results => results.rows)
+            .then(results => results.rows)
+            .then(async (res) => {
+                if (!res.length) {
+                await checkExists('reviews','category', [category])
+                }
+                return res
+        })
     }else{
           return connection
             .query(
               `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY ${sortBy} ${order};`,
             )
-            .then((results) => results.rows);
+              .then((results) => results.rows)
+              .then(async (res) => {
+                if (!res.length) {
+                await checkExists('reviews','category', category)
+                }
+                return res
+        })
     }
 }
 
