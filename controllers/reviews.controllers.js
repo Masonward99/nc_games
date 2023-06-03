@@ -1,5 +1,5 @@
 
-const { findReviewById, findCommentByReview, findReviews, changeReview } = require("../models/reviews.models");
+const { findReviewById, findCommentByReview, findReviews, changeReview, addReview } = require("../models/reviews.models");
 
 exports.getReviewById = (req,res,next) => {
     const id = req.params.review_id;
@@ -38,4 +38,14 @@ exports.patchReview = (req, res, next) => {
     changeReview(id, newVote)
         .then(review => res.status(200).send({review}))
     .catch(next)
+}
+
+exports.postReview = (req, res, next)=>{
+    let body = req.body
+    addReview(body)
+        .then(review => {
+            res.status(200).send({review})
+        })
+    .catch(next)
+    
 }

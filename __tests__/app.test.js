@@ -460,3 +460,76 @@ describe('patch/api/comments/:comment_id', () => {
         
     })
 })
+describe('post /api/reviews', () => {
+    it('returns the correct object', () => {
+        return request(app)
+          .post("/api/reviews")
+          .send({
+            title: "Culture a Love of Agriculture With Agricola",
+            designer: "Uwe Rosenberg",
+            owner: "bainesface",
+            review_img_url:
+              "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+            review_body:
+              "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+            category: "dexterity",
+          })
+          .expect(200)
+          .then((data) =>
+            expect(data.body.review).toEqual({
+              review_id: 14,
+              comment_count: "0",
+              owner: "bainesface",
+              title: "Culture a Love of Agriculture With Agricola",
+              category: "dexterity",
+              review_img_url:
+                "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+              created_at: expect.any(String),
+              votes: 0,
+              designer: "Uwe Rosenberg",
+              review_body:
+                "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+            })
+          );
+    })
+    it('gets a 400 error when owner doesnt exist', () => {
+        return request(app)
+            .post('/api/reviews')
+            .send({
+          title: "Culture a Love of Agriculture With Agricola",
+          designer: "Uwe Rosenberg",
+          owner: "mason",
+          review_img_url:
+            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+          review_body:
+            "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+          category: "dexterity",
+            });  
+    })
+    it('gets a 400 error when category does not exist', () => {
+        return request(app).post("/api/reviews").send({
+          title: "Culture a Love of Agriculture With Agricola",
+          designer: "Uwe Rosenberg",
+          owner: "bainesface",
+          review_img_url:
+            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+          review_body:
+            "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+          category: "trial",
+        });  
+    })
+    it('gets a 400 error when something is missing from body', () => {
+        return request(app)
+            .post("/api/reviews")
+            .send({
+             designer: "Uwe Rosenberg",
+             owner: "bainesface",
+             review_img_url:
+               "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+             review_body:
+               "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+             category: "dexterity",
+            })
+        .expect(400)
+    })
+})

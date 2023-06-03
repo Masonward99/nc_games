@@ -73,4 +73,11 @@ exports.changeReview = async (id, votes) => {
     .then(res => res.rows[0])
     
 }
+exports.addReview = async (body) => {
+    await checkExists('categories', 'slug', [body.category])
+    await checkExists('users','username',[body.owner])
+    return connection.query('INSERT INTO reviews (owner, title, review_body, designer, category, review_img_url) VALUES ($1,$2,$3,$4,$5,$6) RETURNING review_id', [body.owner, body.title, body.review_body, body.designer, body.category, body.review_img_url])
+        .then(result => result.rows[0].review_id)
+        .then(id => this.findReviewById(id))
+}
 
