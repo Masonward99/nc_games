@@ -360,3 +360,27 @@ describe('error handling', () => {
             .then(response => expect(response.body.msg).toBe('Endpoint not found!'))
     })
 })
+
+describe('post/users/:username', () => {
+    it('returns a the created user', () => {
+        return request(app)
+            .post('/api/users/theo')
+            .send({ name: 'mason', avatar_url: 1 })
+            .expect(201)
+            .then((response)=>expect(response.body.user).toEqual({username:'theo', name:'mason', avatar_url:'1'}))
+    })
+    it('returns a 400 error when missing a name', () => {
+        return request(app)
+          .post("/api/users/theo")
+          .send({ avatar_url:'1' })
+          .expect(400)
+          .then()
+    })
+    it('returns a 400 error when username is already in use', () => {
+        return request(app)
+            .post('/api/users/bainesface')
+            .send({ name: 'hello', avatar_url: '1' })
+            .expect(400)
+            .then()
+    })
+})
