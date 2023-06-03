@@ -173,7 +173,7 @@ describe('get/api/reviews/:review_id/comments', () => {
     })
 })
 
-describe('GET/api/reviews', () => {
+describe.only('GET/api/reviews', () => {
     it('should return an array of review objects', () => {
         return request(app)
           .get("/api/reviews")
@@ -213,6 +213,42 @@ describe('GET/api/reviews', () => {
             .expect(200)
             .then(result => expect(result.body.reviews).toBeSortedBy('created_at', { descending: true }))
     })
+    it('can return a specific category', () => {
+        return request(app)
+            .get('/api/reviews?category=euro+game')
+            .expect(200)
+            .then(({ body }) => {
+                body.reviews.forEach(review => expect(review.category).toBe('euro game'))
+            })
+    })
+    it('can sort by comment_count', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=comment_count')
+            .expect(200)
+            .then(data=> expect(data.body.reviews).toBeSortedBy('comment_count', {descending:true}) )
+    })
+    it('can sort by ascending', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=comment_count&&order=asc')
+            .expect(200)
+        .then(({body})=> expect(body.reviews).toBeSortedBy('comment_count',{descending:false}))
+    })
+    it('returns a 400 error when passed an invalid order', () => {
+        return request(app)
+            .get('/api/reviews?order=hi')
+            .expect(400)
+    })
+    it('returns a 404 error when passed a category that doesnt exist', () => {
+        return request(app)
+            .get('/api/reviews?category=yes')
+            .expect(404)
+    })
+    it('returns a 400 error when passed an invalid sort condition', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=fraud')
+        .expect(400)
+    })
+
     describe('DELETE/api/comments/:comment_id', () => {
         it('can remove a comment with id that exists', ()=> {
             return request(app)
