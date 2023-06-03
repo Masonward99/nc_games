@@ -460,7 +460,7 @@ describe('patch/api/comments/:comment_id', () => {
         
     })
 })
-describe.only('post /api/reviews', () => {
+describe('post /api/reviews', () => {
     it('returns the correct object', () => {
         return request(app)
           .post("/api/reviews")
