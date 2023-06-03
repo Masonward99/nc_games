@@ -27,7 +27,8 @@ exports.getReviews = (req, res, next) => {
         order = 'desc'
     }
     findReviews(category, sortBy, order)
-        .then(reviews => res.status(200).send({ reviews }))
+        .then(reviews =>     res.status(200).send({ reviews })
+        )
         .catch(next)
 }
 
