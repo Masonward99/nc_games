@@ -533,3 +533,36 @@ describe('post /api/reviews', () => {
         .expect(400)
     })
 })
+describe('post/api/categories', () => {
+    it('can return the category', () => {
+        return request(app)
+          .post("/api/categories")
+            .send({ slug: "a game", description: "this is a category" })
+            .expect(201)
+          .then((data) =>
+            expect(data.body.category).toEqual({
+              slug: "a game",
+              description: "this is a category",
+            })
+          );
+    })
+    it('gets a 400 error when slug already exists', ()=>{
+         return request(app)
+          .post("/api/categories")
+            .send({ slug: "euro game", description: "this is a category" })
+            .expect(400)
+         
+    })
+    it('gets a 400 error when no description is provided', () => {
+         return request(app)
+           .post("/api/categories")
+           .send({ slug: "a game",  })
+           .expect(400);
+    })
+    it('returns a 400 errors when no slug is provided', () => {
+        return request(app)
+            .post('/api/categories')
+            .send({ description: 'hello' })
+            .expect(400)
+    })
+})
