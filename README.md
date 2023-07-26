@@ -4,7 +4,6 @@ This is the backend project from the northcoders bootcamp. The purpose of this p
 
 During this project I learned about SQL, branches in git, Express and RESTful apis.
 
-
 **Link to hosted version of this project:** https://nc-games-83l3.onrender.com/api.
 
 ## Trello

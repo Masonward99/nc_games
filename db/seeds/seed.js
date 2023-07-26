@@ -28,7 +28,8 @@ const seed = ({ categoryData, commentData, reviewData, userData }) => {
 			CREATE TABLE users (
 				username VARCHAR PRIMARY KEY,
 				name VARCHAR NOT NULL,
-				avatar_url VARCHAR
+				avatar_url VARCHAR DEFAULT 'https://vignette1.wikia.nocookie.net/mrmen/images/7/7f/Mr_Happy.jpg/revision/latest?cb=20140102171729' ,
+        id VARCHAR 
 			);`);
 
       return Promise.all([topicsTablePromise, usersTablePromise]);
