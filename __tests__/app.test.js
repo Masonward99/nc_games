@@ -365,9 +365,9 @@ describe('post/users/:username', () => {
     it('returns a the created user', () => {
         return request(app)
             .post('/api/users/theo')
-            .send({ name: 'mason', avatar_url: 1 })
+            .send({ name: 'mason', avatar_url: 1, id:40 })
             .expect(201)
-            .then((response)=>expect(response.body.user).toEqual({username:'theo', name:'mason', avatar_url:'1'}))
+            .then((response)=>expect(response.body.user).toEqual({username:'theo', name:'mason', avatar_url:'1', id:'40'}))
     })
     it('returns a 400 error when missing a name', () => {
         return request(app)

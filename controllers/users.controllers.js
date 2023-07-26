@@ -10,7 +10,8 @@ exports.postUser = (req, res, next) => {
     const username = req.params.username
     const name = req.body.name
     const url = req.body.avatar_url
-    addUser(username, name, url)
+    const id = req.body.id
+    addUser(username, name, url, id)
         .then((user) => res.status(201).send({user}))
         .catch(next)
 }
