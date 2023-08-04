@@ -506,7 +506,7 @@ describe('post /api/reviews', () => {
           category: "dexterity",
             });  
     })
-    it('gets a 400 error when category does not exist', () => {
+    it('gets a 404 error when category does not exist', () => {
         return request(app).post("/api/reviews").send({
           title: "Culture a Love of Agriculture With Agricola",
           designer: "Uwe Rosenberg",
@@ -516,7 +516,8 @@ describe('post /api/reviews', () => {
           review_body:
             "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
           category: "trial",
-        });  
+        })
+        .expect(404)
     })
     it('gets a 400 error when something is missing from body', () => {
         return request(app)
@@ -565,4 +566,19 @@ describe('post/api/categories', () => {
             .send({ description: 'hello' })
             .expect(400)
     })
+})
+describe('GET/ api/users/:username', () => {
+    it('Returns a 200 with the user object', () => {
+        return request(app).get(`/api/users/mallionaire`).expect(200)
+            .then((data) => expect(data.body.user).toEqual({
+                username: 'mallionaire',
+                avatar_url: "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+                id: null,
+                name: "haz",
+        }))
+    })
+    it('returns a 404 error when user does not exist', () => {
+        return request(app).get(`/api/users/mason`).expect(404)
+    })
+    
 })

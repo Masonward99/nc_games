@@ -1,4 +1,4 @@
-const { findUsers, addUser } = require("../models/users.models")
+const { findUsers, addUser, findUser } = require("../models/users.models")
 
 exports.getUsers = (req, res, next) => {
     findUsers()
@@ -13,5 +13,12 @@ exports.postUser = (req, res, next) => {
     const id = req.body.id
     addUser(username, name, url, id)
         .then((user) => res.status(201).send({user}))
+        .catch(next)
+}
+
+exports.getUser = (req, res, next)=>{
+    const username = req.params.username
+    findUser(username)
+        .then((user) => res.status(200).send({ user }))
         .catch(next)
 }
