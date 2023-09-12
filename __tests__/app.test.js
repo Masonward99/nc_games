@@ -582,3 +582,54 @@ describe('GET/ api/users/:username', () => {
     })
     
 })
+describe('Get/api/users/:username/reviews', () => {
+    it('Returns a 200 with all the users reviews', () => {
+        return request(app)
+          .get(`/api/users/philippaclaire9/reviews`)
+          .expect(200)
+          .then((data) =>
+            expect(data.body.reviews).toEqual([
+              {
+                review_id: 2,
+                title: "Jenga",
+                category: "dexterity",
+                designer: "Leslie Scott",
+                owner: "philippaclaire9",
+                review_body: "Fiddly fun for all the family",
+                review_img_url:
+                  "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+                created_at: "2021-01-18T10:01:41.251Z",
+                votes: 5,
+              },
+            ])
+          );
+    })
+})
+describe('Get/api/users/:username/comments', () => {
+    it('returns a 200 with the reviews by that user', () => {
+       return request(app)
+         .get(`/api/users/philippaclaire9/comments`)
+         .expect(200)
+         .then((data) =>
+           expect(data.body.comments).toEqual([
+             {
+               comment_id: 3,
+               body: "I didn't know dogs could play games",
+               review_id: 3,
+               author: "philippaclaire9",
+               votes: 10,
+               created_at: "2021-01-18T10:09:48.110Z",
+             },
+             {
+               comment_id: 6,
+               body: "Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite",
+               review_id: 3,
+               author: "philippaclaire9",
+               votes: 10,
+               created_at: "2021-03-27T19:49:48.110Z",
+             },
+           ])
+         ); 
+    })
+    
+})
