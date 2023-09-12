@@ -1,4 +1,4 @@
-const { findUsers, addUser, findUser } = require("../models/users.models")
+const { findUsers, addUser, findUser, findReviewsByUser, findCommentsByUser } = require("../models/users.models")
 
 exports.getUsers = (req, res, next) => {
     findUsers()
@@ -21,4 +21,19 @@ exports.getUser = (req, res, next)=>{
     findUser(username)
         .then((user) => res.status(200).send({ user }))
         .catch(next)
+}
+
+exports.getReviewsByUser = (req, res, next) => {
+    const username = req.params.username;
+    findReviewsByUser(username)
+        .then((reviews) => res.status(200).send({ reviews }))
+        .catch(next)
+}
+
+exports.getCommentsByUser = (req, res, next) => {
+    const username = req.params.username;
+    findCommentsByUser(username)
+        .then((comments) => res.status(200).send({ comments }))
+        .catch(next)
+
 }

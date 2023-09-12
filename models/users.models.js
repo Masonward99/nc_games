@@ -17,3 +17,13 @@ exports.findUser = async (username) => {
     return connection.query(`SELECT * FROM users WHERE username = $1;`, [username])
     .then(res => res.rows[0])
 }
+
+exports.findReviewsByUser =  (username) => {
+    return connection.query(`SELECT * FROM reviews WHERE owner = $1;`, [username])
+    .then(res=>res.rows)
+}
+
+exports.findCommentsByUser = (username) => {
+    return connection.query(`SELECT * FROM comments WHERE author = $1`, [username])
+    .then(res=>res.rows)
+}
