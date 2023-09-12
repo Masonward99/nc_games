@@ -1,4 +1,4 @@
-const { getUsers, postUser, getUser, getReviewsByUser, getCommentsByUser } = require('../controllers/users.controllers');
+const { getUsers, postUser, getUser, getReviewsByUser, getCommentsByUser, getUserById } = require('../controllers/users.controllers');
 
 const userRouter = require('express').Router()
 
@@ -17,4 +17,7 @@ userRouter
     .route('/:username/comments')
     .get(getCommentsByUser)
 
+userRouter
+    .route('/id/:id')
+    .get(getUserById)
 module.exports =userRouter

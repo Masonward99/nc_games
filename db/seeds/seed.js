@@ -67,11 +67,12 @@ const seed = ({ categoryData, commentData, reviewData, userData }) => {
       const categoriesPromise = db.query(insertCategoriesQueryStr);
 
       const insertUsersQueryStr = format(
-        'INSERT INTO users (username, name, avatar_url) VALUES %L;',
-        userData.map(({ username, name, avatar_url }) => [
+        'INSERT INTO users (username, name, avatar_url, id) VALUES %L;',
+        userData.map(({ username, name, avatar_url, id }) => [
           username,
           name,
-          avatar_url
+          avatar_url,
+          id
         ])
       );
       const usersPromise = db.query(insertUsersQueryStr);

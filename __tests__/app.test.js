@@ -631,5 +631,20 @@ describe('Get/api/users/:username/comments', () => {
            ])
          ); 
     })
-    
+})
+describe('Get/api/users/id/:id', () => {
+    it('returns the user with the id specified', ()=> {
+        return request(app)
+          .get(`/api/users/id/yes`)
+          .expect(200)
+          .then((data) =>
+            expect(data.body.user).toEqual({
+              username: "dav3rid",
+              name: "dave",
+              avatar_url:
+                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+              id: "yes",
+            })
+          );
+    })
 })
