@@ -24,6 +24,12 @@ exports.findReviewsByUser =  (username) => {
 }
 
 exports.findCommentsByUser = (username) => {
-    return connection.query(`SELECT * FROM comments WHERE author = $1`, [username])
+    return connection.query(`SELECT * FROM comments WHERE author = $1;`, [username])
     .then(res=>res.rows)
+}
+
+exports.findUserById = (id) => {
+    
+    return connection.query(`SELECT * FROM users WHERE id = $1;`, [id])
+    .then(res=>res.rows[0])
 }
