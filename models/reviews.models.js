@@ -42,7 +42,7 @@ exports.findReviews = (category, sortBy, order) => {
 
     if (category) {
         return connection.query(
-          `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id  WHERE reviews.category = $1 GROUP BY reviews.review_id ORDER BY reviews.${sortBy} ${order};`,[category]
+          `SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id  WHERE reviews.category = $1 GROUP BY reviews.review_id ORDER BY ${sortBy} ${order};`,[category]
         )
             .then(results => results.rows)
             .then(async (res) => {
