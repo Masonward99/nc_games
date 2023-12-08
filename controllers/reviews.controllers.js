@@ -1,5 +1,5 @@
 
-const { findReviewById, findCommentByReview, findReviews, changeReview, addReview } = require("../models/reviews.models");
+const { findReviewById, findCommentByReview, findReviews, changeReview, addReview, removeReviewById } = require("../models/reviews.models");
 
 exports.getReviewById = (req,res,next) => {
     const id = req.params.review_id;
@@ -27,7 +27,7 @@ exports.getReviews = (req, res, next) => {
         order = 'desc'
     }
     findReviews(category, sortBy, order)
-        .then(reviews =>     res.status(200).send({ reviews })
+        .then(reviews =>    res.status(200).send({ reviews })
         )
         .catch(next)
 }
@@ -46,6 +46,11 @@ exports.postReview = (req, res, next)=>{
         .then(review => {
             res.status(200).send({review})
         })
-    .catch(next)
-    
+        .catch(next)
+}
+exports.deleteReviewById = (req, res, next) => {
+    const id = req.params.review_id;
+    removeReviewById(id)
+        .then(( )=> res.status(204).send() )
+        .catch(next)
 }

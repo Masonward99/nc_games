@@ -2,8 +2,6 @@ const connection = require("../db/connection");
 
 const { checkExists } = require("../db/seeds/utils");
 
-const format = require('pg-format')
-
 exports.findReviewById = (id) => {
     const idArray = [id];
     return connection.query(`SELECT reviews.review_id, COUNT(comments.review_id) AS comment_count, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer,reviews.review_body  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id  WHERE reviews.review_id = $1 GROUP BY reviews.review_id`, idArray)
@@ -81,3 +79,8 @@ exports.addReview = async (body) => {
         .then(id => this.findReviewById(id))
 }
 
+exports.removeReviewById = async (id) => {
+    await checkExists("reviews", 'review_id', [id])
+    return connection.query(`DELETE FROM reviews WHERE review_id = $1 RETURNING *`, [id])
+        .then((res) => res.rows)
+}

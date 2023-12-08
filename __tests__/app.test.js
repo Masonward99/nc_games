@@ -647,4 +647,21 @@ describe('Get/api/users/id/:id', () => {
             })
           );
     })
+    describe('Delete/api/reviews/review_id', () => {
+        it('returns a 204 if sucessful', () => {
+            return request(app)
+                .delete(`/api/reviews/1`)
+                .expect(204)
+        })
+    })
+    it('returns a 404 if no review found', () => {
+        return request(app)
+            .delete(`/api/reviews/400`)
+            .expect(404)
+    })
+    it('returns a 400 error if review id is invalid', () => {
+        return request(app)
+            .delete(`/api/reviews/alpha`)
+            .expect(400)
+    })
 })
