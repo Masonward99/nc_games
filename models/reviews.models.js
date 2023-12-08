@@ -81,6 +81,7 @@ exports.addReview = async (body) => {
 
 exports.removeReviewById = async (id) => {
     await checkExists("reviews", 'review_id', [id])
-    return connection.query(`DELETE FROM reviews WHERE review_id = $1 RETURNING *`, [id])
+    await connection.query(`DELETE FROM comments WHERE review_id = $1 RETURNING *`, [id])
+    return   connection.query(`DELETE FROM reviews WHERE review_id = $1 RETURNING *`, [id])
         .then((res) => res.rows)
 }

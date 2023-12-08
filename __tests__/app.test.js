@@ -664,4 +664,9 @@ describe('Get/api/users/id/:id', () => {
             .delete(`/api/reviews/alpha`)
             .expect(400)
     })
+    it('can delete reviews that have comments', () => {
+        return request(app)
+            .delete(`/api/reviews/2`)
+            .expect(204)
+    })
 })
