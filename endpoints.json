@@ -2,23 +2,170 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
-  "GET /api/categories": {
-    "description": "serves an array of all categories",
-    "queries": [],
-    "exampleResponse": {
-      "categories": [
-        {
-          "description": "Players attempt to uncover each other's hidden role",
-          "slug": "Social deduction"
+  "Categories" : {
+    "GET /api/categories": {
+      "description": "serves an array of all categories",
+      "queries": [],
+      "exampleResponse": {
+        "categories": [
+          {
+            "description": "Players attempt to uncover each other's hidden role",
+            "slug": "Social deduction"
+          }
+        ]
+      }
+    },
+    "POST /api/categories" : {
+      "description" : "Accepts a body and adds it to the list of the categories. Serves the added category.",
+      "acceptedBody": {
+        "slug": "Category title. String.",
+        "description": "Description of the category. String."
+      },
+      "exampleResponse": {
+        "category":{
+          "slug" : "Engine building",
+          "description": "Games where players construct unique points-gaining engines main element of the gameplay" 
         }
-      ]
+      }
     }
   },
-  "GET /api/reviews": {
-    "description": "serves an array of all reviews",
-    "queries": ["category", "sort_by", "order"],
-    "exampleResponse": {
-      "reviews": [
+  "Users":{
+    "GET/users":{
+      "description":"Serves an array of all users.",
+      "exampleResponse": { "users":[
+        {
+          "id": "o123",
+          "username": "grumpy243",
+          "name": "Steven",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        },
+        {
+          "id": "o12345",
+          "username": "happy539",
+          "name": "Gabe",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        }
+      ]}
+    },
+    "GET/api/users/:username":{
+      "description": "Serves the user object for the specified user",
+      "exampleResponse":{
+        "user": {
+          "id": "o123",
+          "username": "grumpy243",
+          "name": "Steven",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        }
+      }
+    },
+    "POST/api/users/:username":{
+      "description": "Accepts a body and adds it to the list of users. Serving the new user.",
+      "acceptedBody":{
+        "id":"User id. String",
+        "name":"Users name. String",
+        "avatar_url": "Image url"
+      },
+      "exampleResponse": {
+        "user": {
+          "id": "o123",
+          "username": "grumpy243",
+          "name": "Steven",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        }
+      }
+    },
+    "GET/users/:username/reviews":{
+      "description":"Serves an array of all reviews made by a user",
+      "exampleResponse":{ 
+        "reviews": [
+        {
+          "title": "One Night Ultimate Werewolf",
+          "designer": "Akihisa Okui",
+          "owner": "happyamy2016",
+          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "category": "hidden-roles",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "comment_count": 6  
+        }]
+      }
+    },
+    "GET/users/:username/comments":{
+      "description": "Serves an array of all comments made by a user.",
+      "exampleResponse": {
+        "comments" : [ {
+          "body": "Commodo et non ut aute anim nisi occaecat ea veniam ut ad.",
+          "votes": 15,
+          "author": "jessjelly",
+          "review_id": 7,
+          "created_at": "2017-11-22T12:43:33.389Z",
+          "comment_id": 1
+        }]
+      }
+    },
+    "GET/users/id/:id": {
+      "description" : "Serves the user with a specific user id.",
+      "exampleResponse":{
+        "user": {
+          "id": "o123",
+          "username": "grumpy243",
+          "name": "Steven",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        }
+      }
+    }
+  },
+  "Comments" : {
+    "PATCH/comments/:comment_id" : {
+      "description" : "Accepts a body and increments the votes for the comment by the specified amount, serving the updated comment.",
+      "acceptedBody": {
+        "inc_votes": "A positive or negative integer to change the number of votes by",
+        "exampleResponse": {
+          "comment": {
+            "body": "Commodo et non ut aute anim nisi occaecat ea veniam ut ad.",
+            "votes": 18,
+            "author": "jessjelly",
+            "review_id": 7,
+            "created_at": "2017-11-22T12:43:33.389Z",
+            "comment_id": 1
+          }
+        }
+      }
+    },
+    "DELETE/comments/comment_id" : {
+      "description" : "Deletes the specified comment."
+    }
+  },
+  "Reviews" : {
+    "GET/api/reviews": {
+      "description": "serves an array of all reviews",
+      "queries": ["category", "sort_by", "order"],
+      "exampleResponse": {
+        "reviews": [
+          {
+            "title": "One Night Ultimate Werewolf",
+            "designer": "Akihisa Okui",
+            "owner": "happyamy2016",
+            "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+            "category": "hidden-roles",
+            "created_at": "2018-05-30T15:59:13.341Z",
+            "votes": 0,
+            "comment_count": 6
+          }
+        ]
+      }
+    },
+    "POST/api/reviews" : {
+      "description": "Accepts a body and adds a review with that body, returning the posted review.",
+      "acceptedBody": {
+        "owner" : "Username of the user who created the review.",
+        "title": "Title of the review.",
+        "review_body":"Body of the review.",
+        "designer": "The designer of the board game.",
+        "category": "Category of the review.",
+        "review_img_url": "Img url for the review, will default if not specified."
+      },
+      "exampleResponse" : {"review": 
         {
           "title": "One Night Ultimate Werewolf",
           "designer": "Akihisa Okui",
@@ -29,7 +176,72 @@
           "votes": 0,
           "comment_count": 6
         }
-      ]
+      }
+    },
+    "GET/reviews/:review_id" : {
+      "description" : "Serves the review with the specified id.",
+      "exampleResponse": {"review": 
+        {
+          "title": "One Night Ultimate Werewolf",
+          "designer": "Akihisa Okui",
+          "owner": "happyamy2016",
+          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "category": "hidden-roles",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "comment_count": 6
+        }
+      }
+    },
+    "PATCH/review/:review_id": {
+      "description": "Accepts a body an increments the votes for the review by the number of votes, returning the updated review.",
+      "acceptedBody": {
+        "inc_votes":"A positive or negative integer to change the number of votes by"
+      },
+       "exampleResponse": {"review": 
+        {
+          "title": "One Night Ultimate Werewolf",
+          "designer": "Akihisa Okui",
+          "owner": "happyamy2016",
+          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "category": "hidden-roles",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "comment_count": 6
+        }
+      }
+    },
+    "DELETE/review_:review_id": {
+      "description" : "Deletes the specified review."
+    },
+    "GET/reviews/:review_id/comments":{
+      "description" :"Serves an array of all comments made on a review.",
+       "exampleResponse": {
+        "comments": [{
+          "body": "Commodo et non ut aute anim nisi occaecat ea veniam ut ad.",
+          "votes": 18,
+          "author": "jessjelly",
+          "review_id": 7,
+          "created_at": "2017-11-22T12:43:33.389Z",
+          "comment_id": 1
+        }]
+      }
+    },
+    "POST/reviews/:review_id/comments":{
+      "description": "Accepts a body and adds a new comment to the review with the content from the body, serving the new comment.",
+      "acceptedBody":{
+        "username":"Username of the user leaving the comment.",
+        "body":"The body of the comment."
+      },
+       "exampleResponse": {"comment": {
+          "body": "Commodo et non ut aute anim nisi occaecat ea veniam ut ad.",
+          "votes": 18,
+          "author": "jessjelly",
+          "review_id": 7,
+          "created_at": "2017-11-22T12:43:33.389Z",
+          "comment_id": 1
+        }
+      }
     }
   }
 }
