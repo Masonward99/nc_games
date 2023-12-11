@@ -36,7 +36,7 @@ describe('GET/api/categories', () => {
             return request(app)
                 .get('/api')
                 .expect(200)
-                .then(data => expect(JSON.parse(data.body.endpoint)).toEqual(endpoint))
+                .then(data => expect(JSON.parse(data.text)).toEqual(endpoint))
             })
     })
 describe('Get/api/reviews/:review_id', () => {
