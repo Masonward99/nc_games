@@ -1,26 +1,20 @@
-
 const { removeCommentsById, addCommentsByReviewId, updateComments } = require("../models/comments.models");
 
 exports.deleteCommentById = (req,res,next) => {
-    const id = req.params.comment_id;
-    removeCommentsById(id)
+    removeCommentsById(req.params.comment_id)
         .then(() => res.status(204).send())
         .catch(next)
 }
 
 
-exports.postCommentByReviewId = (req,res,next) => {
-    let id = req.params.review_id
-    let body =req.body
-    addCommentsByReviewId(body, id)
+exports.postCommentByReviewId = (req, res, next) => {
+    addCommentsByReviewId(req.body, req.params.review_id)
         .then(comment =>  res.status(201).send({ comment }))
         .catch(next)
 }
 
 exports.changeComment = (req, res, next) => {
-    let id = req.params.comment_id
-    let incVotes = req.body.inc_votes
-    updateComments(incVotes, id)
+    updateComments(req.body.inc_votes, req.params.comment_id)
         .then(comment => res.status(200).send({ comment }))
-    .catch(next)
+        .catch(next)
 }

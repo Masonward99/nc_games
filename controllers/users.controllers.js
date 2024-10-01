@@ -7,39 +7,31 @@ exports.getUsers = (req, res, next) => {
 }
 
 exports.postUser = (req, res, next) => {
-    const username = req.params.username
-    const name = req.body.name
-    const url = req.body.avatar_url
-    const id = req.body.id
-    addUser(username, name, url, id)
+    addUser(req.params.username, req.body.name, req.body.avatar_url, req.body.id)
         .then((user) => res.status(201).send({user}))
         .catch(next)
 }
 
 exports.getUser = (req, res, next)=>{
-    const username = req.params.username
-    findUser(username)
+    findUser(req.params.username)
         .then((user) => res.status(200).send({ user }))
         .catch(next)
 }
 
 exports.getReviewsByUser = (req, res, next) => {
-    const username = req.params.username;
-    findReviewsByUser(username)
+    findReviewsByUser(req.params.username)
         .then((reviews) => res.status(200).send({ reviews }))
         .catch(next)
 }
 
 exports.getCommentsByUser = (req, res, next) => {
-    const username = req.params.username;
-    findCommentsByUser(username)
+    findCommentsByUser(req.params.username)
         .then((comments) => res.status(200).send({ comments }))
         .catch(next)
 }
 
 exports.getUserById = (req, res, next) => {
-    const id = req.params.id;
-    findUserById(id)
+    findUserById(req.params.id)
         .then((user) => res.status(200).send({ user }))
         .catch(next)
 }

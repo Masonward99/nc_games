@@ -1,56 +1,46 @@
 
 const { findReviewById, findCommentByReview, findReviews, changeReview, addReview, removeReviewById } = require("../models/reviews.models");
 
-exports.getReviewById = (req,res,next) => {
-    const id = req.params.review_id;
-    findReviewById(id)
+exports.getReviewById = (req, res, next) => {
+    findReviewById(req.params.review_id)
         .then(review => res.status(200).send({ review }))
         .catch(next);
 }
 
-
 exports.getCommentsByReview = (req, res, next) => {
-    const id = req.params.review_id
-    findCommentByReview(id)
+    findCommentByReview(req.params.review_id)
         .then(data => res.status(200).send({ comments: data }))
-    .catch(next)
+        .catch(next)
 }
 exports.getReviews = (req, res, next) => {
-    const query = req.query
-    const category = query.category
-    let sortBy = query.sort_by
-    let order = query.order
+    let sortBy = req.query.sort_by
+    let order = req.query.order
     if (!sortBy) {
         sortBy= 'created_at'
     }
     if (!order) {
         order = 'desc'
     }
-    findReviews(category, sortBy, order)
-        .then(reviews =>    res.status(200).send({ reviews })
-        )
+
+    findReviews(req.query.category, sortBy, order)
+        .then(reviews => res.status(200).send({ reviews }))
         .catch(next)
 }
 
 exports.patchReview = (req, res, next) => {
-    const newVote = req.body.inc_votes
-    const id = req.params.review_id
-    changeReview(id, newVote)
+    changeReview(req.params.review_id, req.body.inc_votes)
         .then(review => res.status(200).send({review}))
-    .catch(next)
+        .catch(next)
 }
 
 exports.postReview = (req, res, next)=>{
-    let body = req.body
-    addReview(body)
-        .then(review => {
-            res.status(200).send({review})
-        })
+    addReview(req.body)
+        .then(review => res.status(200).send({review}))
         .catch(next)
 }
+
 exports.deleteReviewById = (req, res, next) => {
-    const id = req.params.review_id;
-    removeReviewById(id)
+    removeReviewById(req.params.review_id)
         .then(( )=> res.status(204).send() )
         .catch(next)
 }

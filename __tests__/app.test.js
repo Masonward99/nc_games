@@ -3,9 +3,8 @@ const seed = require('../db/seeds/seed')
 const request = require('supertest')
 const app = require('../db/app')
 const connection = require('../db/connection');
-const { string } = require('pg-format');
 const endpoint = require('../endpoints.json')
-const sorted = require('jest-sorted')
+const toBeSortedBy = require('jest-sorted')
 
 beforeEach(() => seed(testData))
 afterAll(() => connection.end())
@@ -31,14 +30,16 @@ describe('GET/api/categories', () => {
             })
     })
 })
-    describe('GET/api', () => {
-        it('returns an object containing information on the endpoints', ()=> {
-            return request(app)
-                .get('/api')
-                .expect(200)
-                .then(data => expect(data.body).toEqual(endpoint))
-            })
-    })
+
+describe('GET/api', () => {
+    it('returns an object containing information on the endpoints', ()=> {
+        return request(app)
+            .get('/api')
+            .expect(200)
+            .then(data => expect(data.body).toEqual(endpoint))
+        })
+})
+
 describe('Get/api/reviews/:review_id', () => {
     it('returns one review object', () => {
         return request(app)
@@ -56,11 +57,11 @@ describe('Get/api/reviews/:review_id', () => {
                     review_img_url: expect.any(String),
                     created_at: expect.any(String),
                     designer: expect.any(String),
-                    comment_count:expect.any(String)
+                    comment_count: expect.any(String)
                 }))
-            })
+            }
+            )
     })
-        
     it('returns 404 when there are no reviews with that id', () => {
         return request(app)
             .get('/api/reviews/44')
@@ -73,31 +74,32 @@ describe('Get/api/reviews/:review_id', () => {
             .expect(400)
             .then(res => expect(res.body.msg).toBe('bad request'))
     })
-    describe('POST/api/reviews/:review_id/comments', () => {
-        it('returns the posted comment', () => {
-            return request(app)
-                .post("/api/reviews/1/comments")
-                .send({ username: 'mallionaire', body: 'great game' } )
-                .expect(201)
-                .then(result => {
-                    const comment = result.body.comment
-                    expect(comment).toEqual(expect.objectContaining({
-                        body: expect.any(String),
-                        author: expect.any(String),
-                        review_id: expect.any(Number),
-                        created_at: expect.any(String),
-                        votes: expect.any(Number),
-                        comment_id: 7
-                    }))           
-                })
-        })
+})
+
+describe('POST/api/reviews/:review_id/comments', () => {
+    it('returns the posted comment', () => {
+        return request(app)
+            .post("/api/reviews/1/comments")
+            .send({ username: 'mallionaire', body: 'great game' })
+            .expect(201)
+            .then(result => {
+                const comment = result.body.comment
+                expect(comment).toEqual(expect.objectContaining({
+                    body: expect.any(String),
+                    author: expect.any(String),
+                    review_id: expect.any(Number),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    comment_id: 7
+                }))
+            })
     })
     it('gets an 400 error when no data is sent', () => {
         return request(app)
             .post('/api/reviews/1/comments')
             .send({})
             .expect(400)
-        .then(res => expect(res.body.msg).toBe('bad request'))
+            .then(res => expect(res.body.msg).toBe('bad request'))
     })
     it('get an 404 error when username is valid but not found', () => {
         return request(app)
@@ -107,29 +109,27 @@ describe('Get/api/reviews/:review_id', () => {
             .then(res => expect(res.body.msg).toBe('Resource not found'))
     })
     it("get an 400 error when missing data", () => {
-      return request(app)
-        .post("/api/reviews/1/comments")
-        .send({body: "I like this" })
-        .expect(400)
-        .then((res) => expect(res.body.msg).toBe("bad request"));
+        return request(app)
+            .post("/api/reviews/1/comments")
+            .send({ body: "I like this" })
+            .expect(400)
+            .then((res) => expect(res.body.msg).toBe("bad request"));
     });
     it('gets a 400 error when review id is invalid', () => {
         return request(app)
-          .post("/api/reviews/cat/comments")
-          .send({ username: "mallionaire", body: "I like this" })
-          .expect(400)
-          .then((res) => expect(res.body.msg).toBe("bad request"));
+            .post("/api/reviews/cat/comments")
+            .send({ username: "mallionaire", body: "I like this" })
+            .expect(400)
+            .then((res) => expect(res.body.msg).toBe("bad request"));
     })
-
     it("gets an 404 error when review doesnt exist", () => {
-      return request(app)
-        .post("/api/reviews/44/comments")
-        .send({ username: "mallionaire", body: "I like this" })
-        .expect(404)
-        .then((res) => expect(res.body.msg).toBe("Resource not found"));
+        return request(app)
+            .post("/api/reviews/44/comments")
+            .send({ username: "mallionaire", body: "I like this" })
+            .expect(404)
+            .then((res) => expect(res.body.msg).toBe("Resource not found"));
     });
-})  
-
+})
 
 describe('get/api/reviews/:review_id/comments', () => {
     it('returns an array of comments', () => {
@@ -177,8 +177,8 @@ describe('get/api/reviews/:review_id/comments', () => {
 describe('GET/api/reviews', () => {
     it('should return an array of review objects', () => {
         return request(app)
-          .get("/api/reviews")
-          .expect(200)
+            .get("/api/reviews")
+            .expect(200)
             .then((results) => {
                 let data = results.body.reviews;
                 expect(data.length).toBe(13)
@@ -195,7 +195,7 @@ describe('GET/api/reviews', () => {
                         designer: expect.any(String)
                     }))
                 })
-          });
+            });
     })
     it('does not have review_body property', () => {
         return request(app)
@@ -226,13 +226,13 @@ describe('GET/api/reviews', () => {
         return request(app)
             .get('/api/reviews?sort_by=comment_count')
             .expect(200)
-            .then(data=> expect(data.body.reviews).toBeSortedBy('comment_count', {descending:true}) )
+            .then(data => expect(data.body.reviews).toBeSortedBy('comment_count', { descending: true }))
     })
     it('can sort by ascending', () => {
         return request(app)
             .get('/api/reviews?sort_by=comment_count&&order=asc')
             .expect(200)
-        .then(({body})=> expect(body.reviews).toBeSortedBy('comment_count',{descending:false}))
+            .then(({ body }) => expect(body.reviews).toBeSortedBy('comment_count', { descending: false }))
     })
     it('returns a 400 error when passed an invalid order', () => {
         return request(app)
@@ -247,31 +247,32 @@ describe('GET/api/reviews', () => {
     it('returns a 400 error when passed an invalid sort condition', () => {
         return request(app)
             .get('/api/reviews?sort_by=fraud')
-        .expect(400)
+            .expect(400)
     })
+})
 
-    describe('DELETE/api/comments/:comment_id', () => {
-        it('can remove a comment with id that exists', ()=> {
-            return request(app)
-                .delete('/api/comments/2')
-                .expect(204)
-                .then(()=>connection.query('SELECT * FROM comments WHERE comment_id = 2'))
-                .then(res => expect(res.rows[0]).toEqual(undefined))
-        })
+describe('DELETE/api/comments/:comment_id', () => {
+    it('can remove a comment with id that exists', () => {
+        return request(app)
+            .delete('/api/comments/2')
+            .expect(204)
+            .then(() => connection.query('SELECT * FROM comments WHERE comment_id = 2'))
+            .then(res => expect(res.rows[0]).toEqual(undefined))
     })
     it('gets a 404 error when passed a comment_id that doesnt exists', () => {
         return request(app)
             .delete('/api/comments/40')
             .expect(404)
-        .then(res=> expect(res.body.msg).toBe('Resource not found'))
+            .then(res => expect(res.body.msg).toBe('Resource not found'))
     })
     it('gets a 400 error when passed a comment_id that is not valid', () => {
         return request(app)
             .delete('/api/comments/cat')
             .expect(400)
-        .then(res=>expect(res.body.msg).toBe('bad request'))
+            .then(res => expect(res.body.msg).toBe('bad request'))
     })
 })
+
 describe('patch/api/reviews/:review_id', () => {
     it('returns the updated review', () => {
         return request(app)
@@ -294,47 +295,48 @@ describe('patch/api/reviews/:review_id', () => {
     })
     it('returns 404 when review_id doesnt exist', () => {
         return request(app)
-          .patch("/api/reviews/100")
-          .send({ inc_votes: 25 })
+            .patch("/api/reviews/100")
+            .send({ inc_votes: 25 })
             .expect(404)
-        .then(res => expect(res.body.msg).toBe('Resource not found'))
+            .then(res => expect(res.body.msg).toBe('Resource not found'))
     })
     it('returns a 400 when object is in wrong format', () => {
         return request(app)
-          .patch("/api/reviews/1")
-          .send({ votes: 25 })
-          .expect(400)
-          .then((res) => expect(res.body.msg).toBe("bad request"))
+            .patch("/api/reviews/1")
+            .send({ votes: 25 })
+            .expect(400)
+            .then((res) => expect(res.body.msg).toBe("bad request"))
     })
     it('can accept negative review numbers', () => {
          return request(app)
-           .patch("/api/reviews/1")
-           .send({ inc_votes: -1 })
-           .expect(200)
-           .then((res) => {
+            .patch("/api/reviews/1")
+            .send({ inc_votes: -1 })
+            .expect(200)
+            .then((res) => {
              let review = res.body.review;
              expect(review).toEqual(
-               expect.objectContaining({
-                 votes: 0,
-                 review_id: 1,
-                 created_at: expect.any(String),
-                 title: expect.any(String),
-                 designer: expect.any(String),
-                 owner: expect.any(String),
-                 review_img_url: expect.any(String),
-                 category: expect.any(String),
-               })
-             );
-           })
+                expect.objectContaining({
+                    votes: 0,
+                    review_id: 1,
+                    created_at: expect.any(String),
+                    title: expect.any(String),
+                    designer: expect.any(String),
+                    owner: expect.any(String),
+                    review_img_url: expect.any(String),
+                    category: expect.any(String),
+                })
+            );
+        })
     })
     it('gets 400 error when passed a invalid id', () => {
-         return request(app)
-           .patch("/api/reviews/bannana")
-           .send({ inc_votes: 25 })
-           .expect(400)
-           .then((res) => expect(res.body.msg).toBe("bad request"));
+        return request(app)
+            .patch("/api/reviews/bannana")
+            .send({ inc_votes: 25 })
+            .expect(400)
+            .then((res) => expect(res.body.msg).toBe("bad request"));
     })
 })
+
 describe('get users', () => {
     it('returns an array of user objects', () => {
         return request(app)
@@ -352,6 +354,7 @@ describe('get users', () => {
         })
     })
 })
+
 describe('error handling', () => {
     it('gets 404 when passed an invalid endpoint', () => {
         return request(app)
@@ -384,6 +387,7 @@ describe('post/users/:username', () => {
             .then()
     })
 })
+
 describe('patch/api/comments/:comment_id', () => {
     it('returns the updated comments', ()=> {
         return request(app)
@@ -406,7 +410,7 @@ describe('patch/api/comments/:comment_id', () => {
         return request(app)
             .patch('/api/comments/900')
             .send({inc_votes:1})
-         .expect(404)
+            .expect(404)
     })
     it('return a 400 error when body is empty', () => {
         return request(app)
@@ -428,137 +432,140 @@ describe('patch/api/comments/:comment_id', () => {
     })
     it('can increment votes by more than 1', () => {
         return request(app)
-          .patch("/api/comments/1")
-          .send({ inc_votes: 25 })
-          .expect(200)
-          .then((res) => {
-            expect(res.body.comment).toEqual({
-              comment_id: 1,
-              body: "I loved this game too!",
-              votes: 41,
-              author: "bainesface",
-              review_id: 2,
-              created_at: "2017-11-22T12:43:33.389Z",
-            });
-          });
+            .patch("/api/comments/1")
+            .send({ inc_votes: 25 })
+            .expect(200)
+            .then((res) => {
+                expect(res.body.comment).toEqual({
+                    comment_id: 1,
+                    body: "I loved this game too!",
+                    votes: 41,
+                    author: "bainesface",
+                    review_id: 2,
+                    created_at: "2017-11-22T12:43:33.389Z",
+                });
+        });
     })
     it('can accept negative numbers', () => {
         return request(app)
-          .patch("/api/comments/1")
-          .send({ inc_votes: -25 })
-          .expect(200)
-          .then((res) => {
-            expect(res.body.comment).toEqual({
-              comment_id: 1,
-              body: "I loved this game too!",
-              votes: -9,
-              author: "bainesface",
-              review_id: 2,
-              created_at: "2017-11-22T12:43:33.389Z",
+            .patch("/api/comments/1")
+            .send({ inc_votes: -25 })
+            .expect(200)
+            .then((res) => {
+                expect(res.body.comment).toEqual({
+                comment_id: 1,
+                body: "I loved this game too!",
+                votes: -9,
+                author: "bainesface",
+                review_id: 2,
+                created_at: "2017-11-22T12:43:33.389Z",
+                });
             });
-          });
-        
     })
 })
+
 describe('post /api/reviews', () => {
     it('returns the correct object', () => {
         return request(app)
-          .post("/api/reviews")
-          .send({
-            title: "Culture a Love of Agriculture With Agricola",
-            designer: "Uwe Rosenberg",
-            owner: "bainesface",
-            review_img_url:
-              "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
-            review_body:
-              "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
-            category: "dexterity",
-          })
-          .expect(200)
-          .then((data) =>
-            expect(data.body.review).toEqual({
-              review_id: 14,
-              comment_count: "0",
-              owner: "bainesface",
-              title: "Culture a Love of Agriculture With Agricola",
-              category: "dexterity",
-              review_img_url:
+            .post("/api/reviews")
+            .send({
+                title: "Culture a Love of Agriculture With Agricola",
+                designer: "Uwe Rosenberg",
+                owner: "bainesface",
+                review_img_url:
                 "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
-              created_at: expect.any(String),
-              votes: 0,
-              designer: "Uwe Rosenberg",
-              review_body:
+                review_body:
                 "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+                category: "dexterity",
             })
-          );
+            .expect(200)
+            .then((data) =>
+                expect(data.body.review).toEqual({
+                review_id: 14,
+                comment_count: "0",
+                owner: "bainesface",
+                title: "Culture a Love of Agriculture With Agricola",
+                category: "dexterity",
+                review_img_url:
+                    "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+                created_at: expect.any(String),
+                votes: 0,
+                designer: "Uwe Rosenberg",
+                review_body:
+                    "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+                })
+            );
     })
     it('gets a 400 error when owner doesnt exist', () => {
         return request(app)
             .post('/api/reviews')
             .send({
-          title: "Culture a Love of Agriculture With Agricola",
-          designer: "Uwe Rosenberg",
-          owner: "mason",
-          review_img_url:
-            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
-          review_body:
-            "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
-          category: "dexterity",
+                title: "Culture a Love of Agriculture With Agricola",
+                designer: "Uwe Rosenberg",
+                owner: "mason",
+                review_img_url:
+                    "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+                review_body:
+                    "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+                category: "dexterity",
             });  
     })
     it('gets a 404 error when category does not exist', () => {
-        return request(app).post("/api/reviews").send({
-          title: "Culture a Love of Agriculture With Agricola",
-          designer: "Uwe Rosenberg",
-          owner: "bainesface",
-          review_img_url:
-            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
-          review_body:
-            "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
-          category: "trial",
-        })
-        .expect(404)
+        return request(app)
+            .post("/api/reviews")
+            .send({
+                title: "Culture a Love of Agriculture With Agricola",
+                designer: "Uwe Rosenberg",
+                owner: "bainesface",
+                review_img_url:
+                    "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+                review_body:
+                    "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+                category: "trial",
+                })
+            .expect(404)
     })
     it('gets a 400 error when something is missing from body', () => {
         return request(app)
             .post("/api/reviews")
             .send({
-             designer: "Uwe Rosenberg",
-             owner: "bainesface",
-             review_img_url:
-               "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
-             review_body:
-               "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
-             category: "dexterity",
-            })
-        .expect(400)
+                designer: "Uwe Rosenberg",
+                owner: "bainesface",
+                review_img_url:
+                "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+                review_body:
+                "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+                category: "dexterity",
+                })
+            .expect(400)
     })
 })
+
 describe('post/api/categories', () => {
     it('can return the category', () => {
         return request(app)
-          .post("/api/categories")
+            .post("/api/categories")
             .send({ slug: "a game", description: "this is a category" })
             .expect(201)
-          .then((data) =>
-            expect(data.body.category).toEqual({
-              slug: "a game",
-              description: "this is a category",
-            })
-          );
+            .then((data) =>
+                expect(data.body.category).toEqual({
+                slug: "a game",
+                description: "this is a category",
+                })
+            );
     })
     it('gets a 400 error when slug already exists', ()=>{
-         return request(app)
-          .post("/api/categories")
+        return request(app)
+            .post("/api/categories")
             .send({ slug: "euro game", description: "this is a category" })
             .expect(400)
          
     })
     it('gets a 400 error when no description is provided', () => {
-         return request(app)
-           .post("/api/categories")
-           .send({ slug: "a game",  })
-           .expect(400);
+        return request(app)
+            .post("/api/categories")
+            .send({ slug: "a game",  })
+            .expect(400);
     })
     it('returns a 400 errors when no slug is provided', () => {
         return request(app)
@@ -567,6 +574,7 @@ describe('post/api/categories', () => {
             .expect(400)
     })
 })
+
 describe('GET/ api/users/:username', () => {
     it('Returns a 200 with the user object', () => {
         return request(app).get(`/api/users/mallionaire`).expect(200)
@@ -578,7 +586,8 @@ describe('GET/ api/users/:username', () => {
         }))
     })
     it('returns a 404 error when user does not exist', () => {
-        return request(app).get(`/api/users/mason`).expect(404)
+        return request(app).get(`/api/users/mason`)
+            .expect(404)
     })
     
 })
@@ -605,54 +614,57 @@ describe('Get/api/users/:username/reviews', () => {
           );
     })
 })
+
 describe('Get/api/users/:username/comments', () => {
     it('returns a 200 with the reviews by that user', () => {
        return request(app)
          .get(`/api/users/philippaclaire9/comments`)
          .expect(200)
          .then((data) =>
-           expect(data.body.comments).toEqual([
-             {
-               comment_id: 3,
-               body: "I didn't know dogs could play games",
-               review_id: 3,
-               author: "philippaclaire9",
-               votes: 10,
-               created_at: "2021-01-18T10:09:48.110Z",
-             },
-             {
-               comment_id: 6,
-               body: "Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite",
-               review_id: 3,
-               author: "philippaclaire9",
-               votes: 10,
-               created_at: "2021-03-27T19:49:48.110Z",
-             },
-           ])
-         ); 
+            expect(data.body.comments).toEqual([
+                {
+                comment_id: 3,
+                body: "I didn't know dogs could play games",
+                review_id: 3,
+                author: "philippaclaire9",
+                votes: 10,
+                created_at: "2021-01-18T10:09:48.110Z",
+                },
+                {
+                comment_id: 6,
+                body: "Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite",
+                review_id: 3,
+                author: "philippaclaire9",
+                votes: 10,
+                created_at: "2021-03-27T19:49:48.110Z",
+                },
+            ])
+        ); 
     })
 })
+
 describe('Get/api/users/id/:id', () => {
-    it('returns the user with the id specified', ()=> {
+    it('returns the user with the id specified', () => {
         return request(app)
-          .get(`/api/users/id/yes`)
-          .expect(200)
-          .then((data) =>
-            expect(data.body.user).toEqual({
-              username: "dav3rid",
-              name: "dave",
-              avatar_url:
-                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-              id: "yes",
-            })
-          );
+            .get(`/api/users/id/yes`)
+            .expect(200)
+            .then((data) =>
+                expect(data.body.user).toEqual({
+                    username: "dav3rid",
+                    name: "dave",
+                    avatar_url:
+                        "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+                    id: "yes",
+                })
+            );
     })
-    describe('Delete/api/reviews/review_id', () => {
-        it('returns a 204 if sucessful', () => {
-            return request(app)
-                .delete(`/api/reviews/1`)
-                .expect(204)
-        })
+})
+
+describe('Delete/api/reviews/review_id', () => {
+    it('returns a 204 if sucessful', () => {
+        return request(app)
+            .delete(`/api/reviews/1`)
+            .expect(204)
     })
     it('returns a 404 if no review found', () => {
         return request(app)
