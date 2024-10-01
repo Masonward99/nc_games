@@ -19,7 +19,7 @@ This project uses node.Js v(18.14.2) and psql v(15.2).
 
 ## Instalation
 
-* Clone the repository
+* Clone the repository [here](https://github.com/Masonward99/nc_games.git)
 * Run `npm i` to install dependencies.
 * Create the 2 required .env files 
     1. .env.test
@@ -33,7 +33,7 @@ This project uses node.Js v(18.14.2) and psql v(15.2).
 
 * Run `npm run start` to start the application.
 * Connect to API using postman/ insomnia on port 9090.
-* To reseed the database run `npm run seed`
+* To reseed the database use `npm run seed`.
 
 
 ## Testing
@@ -62,26 +62,57 @@ This project was made using test driven development. To run the tests used use t
 |POST | /api/reviews/:review_id/comments | Creates a new comment and adds its to the review |
 
 
-## List of availble endpoints
-
 ### Categories
+
+***Example Category Object***
+
+```json
+{
+    "description": "Players attempt to uncover each other's hidden role",
+    "slug": "Social deduction"
+}
+```
+
 
 **GET /api/categories**
 
-Returns an array of objects which have these keys: slug, description
+Returns an array of all categories.
 
-Post /api/categories 
 
-Accepts a category object with a body of: slug, description and return this category object
+**Post /api/categories** 
+
+Creates a new category and responds with the new category.
+
+***Accepted body***
+```json
+{
+    "Slug":"Name of category, String.",
+    "description":"Description of category, String."
+}
+```
 
 ### Reviews
 
+***Example review object***
+
+```json
+{
+    "title": "One Night Ultimate Werewolf",
+    "designer": "Akihisa Okui",
+    "owner": "happyamy2016",
+    "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+    "category": "hidden-roles",
+    "created_at": "2018-05-30T15:59:13.341Z",
+    "votes": 0,
+    "comment_count": 6
+}
+```
+
 **GET /api/reviews**
 
-Returns a review object with the following properties:
-owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count
+Serves an array of all reviews.
 
-***queries***
+***Queries***
 
 - category => returns the reviews that are in the category choosen
 - sort_by => which can sort by any valid collumn (default of date)
@@ -89,58 +120,104 @@ owner, title, review_id, category, review_img_url, created_at, votes, designer, 
 
 **POST /api/reviews**
 
-Accepts an object with these properties:
-owner, title, review_body, designer, category (must be a category from category list), review_img_url (defaults if not provided)
+Posts a new review to reviews, serving the new review object.
 
-and returns the created review with the aditional properties => review_id, votes, comment_count, created_at
+***Accepted Body***
+```JSON
+{
+    "owner" : "Username of the user who created the review. String (From users)",
+    "title": "Title of the review. String",
+    "review_body":"Body of the review. String.",
+    "designer": "The designer of the board game. String.",
+    "category": "Category of the review. String (from categories).",
+    "review_img_url": "Img url for the review, will default if not specified. String"
+}
+```
+
 
 
 **GET /api/reviews/:review_id**
 
-Returns a review object with these properties:
-review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at, comment_count
+Returns the review object of the review with the specified id.
 
 **PATCH /api/reviews/:review_id**
 
-Accepts an object with the property of inc_votes and updates the votes of this review by that much returning the updated review object
+Accepts an object with the property of inc_votes and updates the votes of this review by that much returning the updated review object.
 
+***Accepted Body***
+```json
+{
+    "inc_votes":"Amount to change votes. Int."
+}
+```
 
 **GET /api/review/:review_id/comments**
 
-Returns an array of comments for the given review id
-these comments contain these properties:
-comment_id, votes, created_at, author, body, review_id
-Most recent comment should be given first
-
+Returns an array of comments for the given review id. Comments are sorted with newest given first.
 
 **POST /api/reviews/:review_id/comments**
 
-Accepts a body with these properties:
-username, body
-and returns the posted comment
+Adds a new comment to a review.
+
+***Accepted Body***
+```json
+{
+    "username":"Username of the user leaving the comment.",
+    "body":"The body of the comment.String."
+}
+```
 
 ### Comments
 
+***Example Comment Object***
+```json
+{
+    "body": "Commodo et non ut aute anim nisi occaecat ea veniam ut ad.",
+    "votes": 18,
+    "author": "jessjelly",
+    "review_id": 7,
+    "created_at": "2017-11-22T12:43:33.389Z",
+    "comment_id": 1
+}
+```
+
 **DELETE /api/comments/:comment_id**
 
-Deletes the comment by the given id returing a status of 204
+Deletes the comment by the given id returing a status of 204.
 
 **PATCH /api/comments/:comment_id**
 
 Accepts an object containg the property of inc_count and increments the votes property of this comment by this ammount 
-returning the updated comment object
+returning the updated comment object.
+
+***Accepted Body***
+
+```Json
+{
+    "inc_count":"Amount to change count by. Int."
+}
+```
 
 ### Users
 
+***Example User Object***
+
+```json
+{
+    "id": "o123",
+    "username": "grumpy243",
+    "name": "Steven",
+    "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+}
+```
+
+
 **GET /api/users**
 
-Returns an array of objects containing all users
-the user object have these properties:
-username, name, avatar_url
+Returns an array of objects containing all users.
 
 
 **GET /api/users/:username**
 
-Returns a user object with these properties:
-username, name, avatar_url
+Returns the user with that username.
 
