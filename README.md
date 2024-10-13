@@ -194,7 +194,7 @@ returning the updated comment object.
 
 ```Json
 {
-    "inc_count":"Amount to change count by. Int."
+    "inc_votes":"Amount to change votes by. Int."
 }
 ```
 
